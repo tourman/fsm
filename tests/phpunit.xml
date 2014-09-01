@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<phpunit
+    bootstrap="bootstrap.php"
+    colors="true"
+    stopOnError="true"
+    stopOnFailure="true"
+    stopOnIncomplete="true"
+    stopOnSkipped="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+>
+    <testsuites>
+        <testsuite name="FiniteStateMachine">
+            <file>FiniteStateMachine/VerifyStateSetTest.php</file>
+            <file>FiniteStateMachine/SleepTest.php</file>
+            <file>FiniteStateMachine/ActionTest.php</file>
+            <file>FiniteStateMachine/VerifySymbolTest.php</file>
+            <file>FiniteStateMachine/VerifyLogTest.php</file>
+            <file>FiniteStateMachine/DisplayLogTest.php</file>
+            <file>FiniteStateMachine/GetTimestampTest.php</file>
+            <file>FiniteStateMachine/ResetTest.php</file>
+            <file>FiniteStateMachine/IntegrationTest.php</file>
+            <file>FiniteStateMachine/SetStateSetTest.php</file>
+            <file>FiniteStateMachine/ActionTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>
