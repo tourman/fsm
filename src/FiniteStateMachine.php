@@ -8,6 +8,7 @@ class FiniteStateMachine
 
     const EXCEPTION_STATES_ARE_SET = 110;
     const EXCEPTION_STATES_ARE_NOT_SET = 111;
+    const EXCEPTION_SLEEP = 112;
 
     const EXCEPTION_NO_DEFAULT_SYMBOL = 120;
     const EXCEPTION_ABSENT_STATE = 121;
@@ -39,6 +40,7 @@ class FiniteStateMachine
     protected $_stateSet;
     protected $_state;
     protected $_log = array();
+    protected $_sleep = false;
 
     public function verifyStateSet($stateSet)
     {
@@ -102,11 +104,18 @@ class FiniteStateMachine
 
     public function sleep()
     {
+        if ($this->_sleep) {
+            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
+        }
+        $this->_sleep = true;
         return $this->_log;
     }
 
     public function reset()
     {
+        if ($this->_sleep) {
+            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
+        }
         if (!$this->isInitialized()) {
             throw new RuntimeException('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
         }
@@ -144,6 +153,9 @@ class FiniteStateMachine
 
     public function action($symbol, $arguments = array())
     {
+        if ($this->_sleep) {
+            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
+        }
         if (!is_array($arguments)) {
             throw new InvalidArgumentException('Argument $arguments has invalid type', self::EXCEPTION_INVALID_TYPE);
         }
