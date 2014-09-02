@@ -85,6 +85,39 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideStateSetsWithInvalidTypeState()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    0 => array(),
+                ),
+            ),
+            array(
+                'stateSet' => array(
+                    false => array(),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithInvalidTypeState
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 203
+     */
+    public function test_VerifyStateSet_InvalidTypeState_ThrowsException($stateSet)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith('invalid type state', $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(

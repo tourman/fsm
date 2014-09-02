@@ -10,6 +10,7 @@ class FiniteStateMachine
     const EXCEPTION_STATES_ARE_NOT_SET = 111;
 
     const EXCEPTION_STATE_SET_IS_EMPTY = 202;
+    const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_STATE = 203;
 
     const EXCEPTION_NO_DEFAULT_SYMBOL = 120;
     const EXCEPTION_ABSENT_STATE = 121;
@@ -48,6 +49,11 @@ class FiniteStateMachine
         }
         if (!$stateSet) {
             throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty array", self::EXCEPTION_STATE_SET_IS_EMPTY);
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            if (!is_string($state)) {
+                throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type state", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_STATE);
+            }
         }
         return;
         /***************************/
