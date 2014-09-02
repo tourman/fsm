@@ -57,22 +57,22 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         */
         return array(
             array(
-                array(),
+                'stateSet' => array(),
             ),
             array(
-                array(
+                'stateSet' => array(
                     1,
                     2,
                     3,
                 ),
             ),
             array(
-                array(
+                'stateSet' => array(
                     array(),
                 ),
             ),
             array(
-                array(
+                'stateSet' => array(
                     array(
                         1,
                         2,
@@ -81,7 +81,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
                 ),
             ),
             array(
-                array(
+                'stateSet' => array(
                     array(
                         array(),
                     ),
