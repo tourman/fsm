@@ -60,6 +60,31 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideEmptyStateSets()
+    {
+        return array(
+            array(
+                'stateSet' => array(),
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideEmptyStateSets
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 202
+     */
+    public function test_VerifyStateSet_EmptyStateSet_ThrowsException($stateSet)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(

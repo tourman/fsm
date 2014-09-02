@@ -9,6 +9,8 @@ class FiniteStateMachine
     const EXCEPTION_STATES_ARE_SET = 110;
     const EXCEPTION_STATES_ARE_NOT_SET = 111;
 
+    const EXCEPTION_STATE_SET_IS_EMPTY = 202;
+
     const EXCEPTION_NO_DEFAULT_SYMBOL = 120;
     const EXCEPTION_ABSENT_STATE = 121;
     const EXCEPTION_ABSENT_METHOD = 122;
@@ -41,6 +43,14 @@ class FiniteStateMachine
 
     public function verifyStateSet($stateSet)
     {
+        if (!is_array($stateSet)) {
+            throw new InvalidArgumentException('Argument $stateSet has invalid type', self::EXCEPTION_INVALID_TYPE);
+        }
+        if (!$stateSet) {
+            throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty array", self::EXCEPTION_STATE_SET_IS_EMPTY);
+        }
+        return;
+        /***************************/
         if (!is_array($stateSet)) {
             throw new InvalidArgumentException('Argument $stateSet has invalid type', self::EXCEPTION_INVALID_TYPE);
         }
