@@ -5,7 +5,6 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 /**
  * public function test_Sleep_Before_MethodIsAllowed()
  * public function test_Sleep_After_MethodIsBlocked()
- * public function test_Sleep_Default_ReturnsLog()
  * public function test_Sleep_Default_AppendsSleepItemToLog()()
  */
 class Fsm_SleepTest extends FsmTestCase
@@ -56,14 +55,6 @@ class Fsm_SleepTest extends FsmTestCase
     {
         $this->_fsm->sleep();
         call_user_func_array(array($this->_fsm, $method), $arguments);
-    }
-
-    public function test_Sleep_Default_ReturnsLog()
-    {
-        $expectedLog = md5(uniqid());
-        $this->setLog($expectedLog);
-        $log = $this->_fsm->sleep();
-        $this->assertSame($expectedLog, $log);
     }
 
     public function test_Sleep_Default_AppendsSleepItemToLog()
