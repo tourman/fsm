@@ -11,6 +11,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_SymbolRefersToNonpublicMethod_ThrowsException()
  * public function test_VerifyStateSet_SymbolDoesNotHaveState_ThrowsException()
  * public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException()
+ * public function test_VerifyStateSet_EmptyState_DoesNotThrowException()
  * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
  */
 class Fsm_VerifyStateSetTest extends FsmTestCase
@@ -358,6 +359,54 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
     public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException($stateSet)
     {
         $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    public function provideStateSetsWithEmptyState()
+    {
+        return array(
+            array(
+                array(
+                    'INIT' => array(
+                        'close' => array(
+                            'state' => 'CLOSE',
+                            'action' => 'close',
+                        ),
+                    ),
+                    //Final state
+                    'CLOSE' => array(
+                    ),
+                ),
+            ),
+            array(
+                array(
+                    'INIT' => array(
+                        'close' => array(
+                            'state' => 'CLOSE',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'ERROR',
+                        ),
+                    ),
+                    //2 final states
+                    'CLOSE' => array(
+                    ),
+                    'ERROR' => array(
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider provideStateSetsWithEmptyState
+     * @expectedException Exception
+     * @expectedExceptionMessage 5a14dd7e909f307a5ce6009fb9a8c505
+     */
+    public function test_VerifyStateSet_EmptyState_DoesNotThrowException($stateSet)
+    {
+        $this->_fsm->verifyStateSet($stateSet);
+        throw new Exception('5a14dd7e909f307a5ce6009fb9a8c505');
     }
 
     /**

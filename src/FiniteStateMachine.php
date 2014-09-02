@@ -14,7 +14,6 @@ class FiniteStateMachine
     const EXCEPTION_ABSENT_METHOD = 122;
     const EXCEPTION_NONPUBLIC_METHOD = 123;
     const EXCEPTION_NO_STATE = 124;
-    const EXCEPTION_UNLINKED_STATE = 125;
 
     const EXCEPTION_INVALID_TYPE_SYMBOL = 131;
     const EXCEPTION_SYMBOL_IS_OUT_OF_ALPHABET = 132;
@@ -52,9 +51,6 @@ class FiniteStateMachine
             if (!is_array($symbolSet)) {
                 throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid symbol set for state \"$state\"", self::EXCEPTION_INVALID_VALUE);
             }
-            if (!$symbolSet) {
-                throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty symbol set for state \"$state\"", self::EXCEPTION_INVALID_VALUE);
-            }
             foreach ($symbolSet as $symbol => $destination) {
                 if (!is_array($destination)) {
                     throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid destination for symbol \"$symbol\"", self::EXCEPTION_INVALID_VALUE);
@@ -85,12 +81,6 @@ class FiniteStateMachine
                 }
                 $linkedStates[] = $destination['state'];
             }
-        }
-        $states = array_keys($stateSet);
-        $unlinkedStates = array_diff($states, $linkedStates);
-        if ($unlinkedStates) {
-            $unlinkedStates = implode(',', $unlinkedStates);
-            throw new InvalidArgumentException("Argument \$stateSet has invalid value: there are states that are not linked ($unlinkedStates)", self::EXCEPTION_UNLINKED_STATE);
         }
         return true;
     }
