@@ -3,6 +3,22 @@
 require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../FsmTestCase.php')));
 
 /**
+ * public function test_VerifyStateSet_InvalidTypeStateSet_ThrowsException
+ * public function test_VerifyStateSet_EmptyStateSet_ThrowsException
+ * public function test_VerifyStateSet_InvalidTypeState_ThrowsException
+ * public function test_VerifyStateSet_FirstStateIsEmpty_ThrowsException
+ * public function test_VerifyStateSet_NonFirstStateIsEmpty_DoesNotThrowException
+ * public function test_VerifyStateSet_InvalidTypeSymbolSet_ThrowsException
+ * public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException
+ * public function test_VerifyStateSet_StateHasNoDefaultSymbol_DoesNotThrowException
+ * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException
+ * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
+ * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
+ * public function test_VerifyStateSet_DestinationRefetsToAbsentMethod_ThrowsException
+ * public function test_VerifyStateSet_DestinationRefersToNonpublicMethod_ThrowsException
+ * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
+ */
+/**
  * public function test_VerifyStateSet_InvalidTypeArguments_ThrowsException
  * public function test_VerifyStateSet_InvalidValueArguments_ThrowsException() //Check for structure
  * public function test_VerifyStateSet_StateDoesNotHaveDefaultSymbol_DoesNotThrowException()
