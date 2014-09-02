@@ -118,6 +118,77 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideStateSetsWithInvalidTypeSymbolSet()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'BOOL' => false,
+                    'CLOSE' => array(
+                    ),
+                ),
+                'state' => 'BOOL',
+            ),
+            array(
+                'stateSet' => array(
+                    'INTEGER' => 1,
+                    'CLOSE' => array(
+                    ),
+                ),
+                'state' => 'INTEGER',
+            ),
+            array(
+                'stateSet' => array(
+                    'DOUBLE' => 1.1,
+                    'CLOSE' => array(
+                    ),
+                ),
+                'state' => 'DOUBLE',
+            ),
+            array(
+                'stateSet' => array(
+                    'STRING' => 'false',
+                    'CLOSE' => array(
+                    ),
+                ),
+                'state' => 'STRING',
+            ),
+            array(
+                'stateSet' => array(
+                    'CLASS' => new stdClass(),
+                    'CLOSE' => array(
+                    ),
+                ),
+                'state' => 'CLASS',
+            ),
+            array(
+                'stateSet' => array(
+                    'NULL' => null,
+                    'CLOSE' => array(
+                    ),
+                ),
+                'state' => 'NULL',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithInvalidTypeSymbolSet
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 204
+     */
+    public function test_VerifyStateSet_InvalidTypeSymbolSet_ThrowsException($stateSet, $state)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("invalid type symbol set for state $state", $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
