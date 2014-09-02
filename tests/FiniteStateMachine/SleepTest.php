@@ -57,4 +57,12 @@ class Fsm_SleepTest extends FsmTestCase
         $this->_fsm->sleep();
         call_user_func_array(array($this->_fsm, $method), $arguments);
     }
+
+    public function test_Sleep_Default_ReturnsLog()
+    {
+        $expectedLog = md5(uniqid());
+        $this->setLog($expectedLog);
+        $log = $this->_fsm->sleep();
+        $this->assertSame($expectedLog, $log);
+    }
 }
