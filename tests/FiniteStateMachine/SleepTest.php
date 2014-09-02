@@ -65,4 +65,25 @@ class Fsm_SleepTest extends FsmTestCase
         $log = $this->_fsm->sleep();
         $this->assertSame($expectedLog, $log);
     }
+
+    public function test_Sleep_Default_AppendsSleepItemToLog()
+    {
+        $expectedTimestamp = md5(uniqid());
+        $expectedLog = array(
+            md5(uniqid()),
+            array(
+                'state' => null,
+                'reason' => 'sleep',
+                'symbol' => null,
+                'timestamp' => $expectedTimestamp,
+            ),
+        );
+        $log = array_slice($expectedLog, 0, -1);
+        $className = get_class($this->_fsm);
+        $this->_fsm = $this->getMockBuilder($className)->setMethods(array('getTimestamp'))->getMock();
+        $this->_fsm->expects($this->once())->method('getTimestamp')->will($this->returnValue($expectedTimestamp));
+        $this->setLog($log);
+        $log = $this->_fsm->sleep();
+        $this->assertSame($expectedLog, $log);
+    }
 }
