@@ -32,6 +32,34 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  */
 class Fsm_VerifyStateSetTest extends FsmTestCase
 {
+    public function provideInvalidTypeStateSets()
+    {
+        return array(
+            array(false),
+            array(1),
+            array(1.1),
+            array('false'),
+            array(new stdClass()),
+            array(null),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideInvalidTypeStateSets
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 101
+     */
+    public function test_VerifyStateSet_InvalidTypeStateSet_ThrowsException($stateSet)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidTypeArgumentExceptionMessage($e, 'stateSet');
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
