@@ -329,12 +329,12 @@ class Fsm_VerifyLogTest extends FsmTestCase
             1.1,
             array(),
             new stdClass(),
-            null,
         );
         return $this->_provideLogsWithSpecificValues('state', $states);
     }
 
     /**
+     * @group issue1
      * @dataProvider providLogsWithInvalidTypeStates
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 111
