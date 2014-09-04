@@ -35,6 +35,7 @@ class Fsm_SleepTest extends FsmTestCase
     }
 
     /**
+     * @group issue1
      * @dataProvider provideMethods
      * @expectedException Exception
      * @expectedExceptionMessage 47fcddc8193f1bed347ae752d8b30bbe
@@ -46,6 +47,7 @@ class Fsm_SleepTest extends FsmTestCase
     }
 
     /**
+     * @group issue1
      * @dataProvider provideMethods
      * @expectedException RuntimeException
      * @expectedExceptionCode 112
@@ -57,6 +59,9 @@ class Fsm_SleepTest extends FsmTestCase
         call_user_func_array(array($this->_fsm, $method), $arguments);
     }
 
+    /**
+     * @group issue1
+     */
     public function test_Sleep_Default_AppendsSleepItemToLog()
     {
         $expectedTimestamp = md5(uniqid());
