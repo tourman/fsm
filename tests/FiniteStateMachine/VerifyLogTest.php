@@ -653,75 +653,75 @@ class Fsm_VerifyLogTest extends FsmTestCase
         /*
         $validLogTemplates['null']['init'] = array(0,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
             ),
         );
         */
         $invalidLogTemplates['null']['action'] = array(2,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        null,            '17002.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           null,           '17002.000001'),
             ),
         );
         /*
         $validLogTemplates['null']['reset'] = array(2,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'INIT',            'reset',        null,            '17002.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('INIT',           'reset',            null,           '17002.000001'),
             ),
         );
         */
         $invalidLogTemplates['absent']['init'] = array(0,
             array(
-                array(    'INIT',            'init',            'failed',        '17000.000001'),
+                array('INIT',           'init',             'failed',       '17000.000001'),
             ),
         );
         $invalidLogTemplates['absent']['action'] = array(1,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'failed',        '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'failed',       '17001.000001'),
             ),
         );
         $invalidLogTemplates['absent']['reset'] = array(1,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'INIT',            'reset',        'failed',        '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('INIT',           'reset',            'failed',       '17001.000001'),
             ),
         );
         //$invalidLogTemplates['exists']['init'] //senseless
         $invalidLogTemplates['exists']['action'] = array(3,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
-                array(    'FAILED',        'action',        'void',            '17003.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
+                array('FAILED',         'action',           'void',         '17003.000001'),
             ),
         );
         $invalidLogTemplates['exists']['reset'] = array(3,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'INIT',            'reset',        null,            '17002.000001'),
-                array(    'INIT',            'reset',        'checkout',        '17003.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('INIT',           'reset',            null,           '17002.000001'),
+                array('INIT',           'reset',            'checkout',     '17003.000001'),
             ),
         );
         //$invalidLogTemplates['allows']['init'] //senseless
         /*
         $validLogTemplates['allows']['action'] = array(1,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
             ),
         );
         */
         $invalidLogTemplates['allows']['reset'] = array(3,
             array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'INIT',            'reset',        null,            '17002.000001'),
-                array(    'INIT',            'reset',        '*',            '17003.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('INIT',           'reset',            null,           '17002.000001'),
+                array('INIT',           'reset',            '*',            '17003.000001'),
             ),
         );
         //Null: symbol is null. Absent: symbol is absent for the current symbol set. Exists: symbol exists in the current set but not allows transition. Allows: symbol exists in the set and allows transition.
@@ -735,18 +735,18 @@ class Fsm_VerifyLogTest extends FsmTestCase
                 $log = $invalidLogTemplates[$symbolMode][$reason][1];
                 foreach ($log as &$logRecord) {
                     $logRecord = array(
-                        'state'        => $logRecord[0],
+                        'state'     => $logRecord[0],
                         'reason'    => $logRecord[1],
                         'symbol'    => $logRecord[2],
-                        'timestamp'    => $logRecord[3],
+                        'timestamp' => $logRecord[3],
                     );
                 }
                 unset($logRecord);
                 $argumentSet[] = array(
-                    'stateSet'            => $stateSet,
-                    'log'                => $log,
+                    'stateSet'          => $stateSet,
+                    'log'               => $log,
                     'logRecordIndex'    => $invalidLogTemplates[$symbolMode][$reason][0],
-                    'stateConditions'    => array(
+                    'stateConditions'   => array(
                         'symbolMode'        => $symbolMode,
                         'reason'            => $reason,
                     ),
