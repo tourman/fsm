@@ -374,180 +374,180 @@ class Fsm_VerifyLogTest extends FsmTestCase
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[0][0][0]['init'] =    array(1, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'FAILED',        'init',            null,            '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('FAILED',         'init',             null,           '17001.000001'),
             ),
         );
         */
         $invalidLogTemplates[0][0][0]['action'] =    array(2, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PENDING',        'action',        'pending',        '17002.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PENDING',        'action',           'pending',      '17002.000001'),
             ),
         );
         $invalidLogTemplates[0][0][0]['reset'] =    array(3, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
-                array(    'CHECKOUT',        'reset',        null,            '17003.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
+                array('CHECKOUT',       'reset',            null,           '17003.000001'),
             ),
         );
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[0][0][1]['init'] =    array(1, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'init',            null,            '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'init',             null,           '17001.000001'),
             ),
         );
         */
         /*
         $validLogTemplates[0][0][1]['action'] =    array(1, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
             ),
         );
         */
         $invalidLogTemplates[0][0][1]['reset'] =    array(2, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'reset',        null,            '17002.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'reset',            null,           '17002.000001'),
             ),
         );
         $invalidLogTemplates[0][1][0]['init'] =    array(0, array(
-                array(    'CHECKOUT',        'init',            null,            '17000.000001'),
+                array('CHECKOUT',       'init',             null,           '17000.000001'),
             ),
         );
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[0][1][0]['action'] =    array(0, array(
-                array(    'PENDING',        'action',        'pending',        '17000.000001'),
+                array('PENDING',        'action',           'pending',      '17000.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[0][1][0]['reset'] =    array(0, array(
-                array(    'PROCESSING',    'reset',        null,            '17000.000001'),
-                array(    'PENDING',        'action',        'pending',        '17001.000001'),
+                array('PROCESSING',     'reset',            null,           '17000.000001'),
+                array('PENDING',        'action',           'pending',      '17001.000001'),
             ),
         );
         */
         $invalidLogTemplates[0][1][1]['init'] =    array(0, array(
-                array(    'CHECKOUT',        'init',            null,            '17000.000001'),
+                array('CHECKOUT',       'init',             null,           '17000.000001'),
             ),
         );
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[0][1][1]['action'] =    array(0, array(
-                array(    'PENDING',        'action',        'pending',        '17000.000001'),
+                array('PENDING',        'action',           'pending',      '17000.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[0][1][1]['reset'] =    array(0, array(
-                array(    'PROCESSING',    'reset',        null,            '17000.000001'),
-                array(    'PENDING',        'action',        'pending',        '17001.000001'),
+                array('PROCESSING',     'reset',            null,           '17000.000001'),
+                array('PENDING',        'action',           'pending',      '17001.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[1][0][0]['init'] =    array(2, array(
-                array(    'INIT',            'init',            null,            '17000.000000'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000000'),
-                array(    'INIT',            'init',            null,            '17002.000000'),
+                array('INIT',           'init',             null,           '17000.000000'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000000'),
+                array('INIT',           'init',             null,           '17002.000000'),
             ),
         );
         */
         $invalidLogTemplates[1][0][0]['action'] =    array(3, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
-                array(    'INIT',            'action',        '*',            '17003.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
+                array('INIT',           'action',           '*',            '17003.000001'),
             ),
         );
         /*
         $validLogTemplates[1][0][0]['reset'] =    array(4, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
-                array(    'VOID',            'action',        'void',            '17003.000001'),
-                array(    'INIT',            'reset',        null,            '17004.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
+                array('VOID',           'action',           'void',         '17003.000001'),
+                array('INIT',           'reset',            null,           '17004.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[1][0][1]['init'] =    array(1, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'INIT',            'init',            null,            '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('INIT',           'init',             null,           '17001.000001'),
             ),
         );
         */
         /*
         $validLogTemplates[1][0][1]['action'] =    array(1, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'INIT',            'action',        '*',            '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('INIT',           'action',           '*',            '17001.000001'),
             ),
         );
         */
         /*
         $validLogTemplates[1][0][1]['reset'] =    array(1, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'INIT',            'reset',        null,            '17001.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('INIT',           'reset',            null,           '17001.000001'),
             ),
         );
         */
         /*
         $validLogTemplates[1][1][0]['init'] =    array(0, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[1][1][0]['action'] =    array(0, array(
-                array(    'INIT',            'action',        '*',            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
+                array('INIT',           'action',           '*',            '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[1][1][0]['reset'] =    array(0, array(
-                array(    'INIT',            'reset',        null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
+                array('INIT',           'reset',            null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
             ),
         );
         */
         /*
         $validLogTemplates[1][1][1]['init'] =    array(0, array(
-                array(    'INIT',            'init',            null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
+                array('INIT',           'init',             null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[1][1][1]['action'] =    array(0, array(
-                array(    'INIT',            'action',        '*',            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
+                array('INIT',           'action',           '*',            '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
             ),
         );
         */
         /*
         //Hide because of reason sequence check
         $invalidLogTemplates[1][1][1]['reset'] =    array(0, array(
-                array(    'INIT',            'reset',        null,            '17000.000001'),
-                array(    'CHECKOUT',        'action',        'checkout',        '17001.000001'),
-                array(    'PROCESSING',    'action',        'processing',    '17002.000001'),
+                array('INIT',           'reset',            null,           '17000.000001'),
+                array('CHECKOUT',       'action',           'checkout',     '17001.000001'),
+                array('PROCESSING',     'action',           'processing',   '17002.000001'),
             ),
         );
         */
@@ -565,21 +565,21 @@ class Fsm_VerifyLogTest extends FsmTestCase
                         $log = $invalidLogTemplates[$firstState][$firstLogRecord][$allowedTransition][$reason][1];
                         foreach ($log as &$logRecord) {
                             $logRecord = array(
-                                'state'        => $logRecord[0],
+                                'state'     => $logRecord[0],
                                 'reason'    => $logRecord[1],
                                 'symbol'    => $logRecord[2],
-                                'timestamp'    => $logRecord[3],
+                                'timestamp' => $logRecord[3],
                             );
                         }
                         unset($logRecord);
                         $argumentSet[] = array(
-                            'stateSet'            => $stateSet,
-                            'log'                => $log,
+                            'stateSet'          => $stateSet,
+                            'log'               => $log,
                             'logRecordIndex'    => $invalidLogTemplates[$firstState][$firstLogRecord][$allowedTransition][$reason][0],
-                            'stateConditions'    => array(
+                            'stateConditions'   => array(
                                 'firstState'        => $firstState,
                                 'firstLogRecord'    => $firstLogRecord,
-                                'allowedTransition'    => $allowedTransition,
+                                'allowedTransition' => $allowedTransition,
                                 'reason'            => $reason,
                             ),
                         );
