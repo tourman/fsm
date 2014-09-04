@@ -140,6 +140,12 @@ class FiniteStateMachine
             $this->_log = $log;
             $lastLogRecord = array_pop($log);
             $this->_state = $lastLogRecord['state'];
+            $this->_log[] = array(
+                'state' => null,
+                'reason' => 'wakeup',
+                'symbol' => null,
+                'timestamp' => $this->getTimestamp(),
+            );
         } else {
             $this->_setState(array_shift(array_keys($stateSet)), 'init');
         }

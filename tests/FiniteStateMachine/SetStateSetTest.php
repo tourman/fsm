@@ -60,7 +60,14 @@ class Fsm_SetStateSetTest extends FsmTestCase
             $argumentSets[] = array(
                 'stateSet' => $stateSet,
                 'log' => $log,
-                'expectedLog' => $log,
+                'expectedLog' => array_merge($log, array(
+                    array(
+                        'state' => null,
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => sprintf('%.6f', mktime(0, 0, 1, 18, 4, 2014) + rand (1, 999999) / 1000000),
+                    )
+                )),
             );
             $argumentSets[] = array(
                 'stateSet' => $stateSet,
@@ -133,14 +140,15 @@ class Fsm_SetStateSetTest extends FsmTestCase
     }
 
     /**
+     * @group issue1
      * @dataProvider provideValidArguments
      */
     public function test_SetStateSet_ValidArguments_SetsLog($stateSet, $log, $expectedLog)
     {
-        $expectedLogRecord = $expectedLog[0];
+        $expectedLogRecord = array_shift(array_slice($expectedLog, -1));
         $className = get_class($this->_fsm);
         $this->_fsm = $this->getMockBuilder($className)->setMethods(array('getTimestamp'))->getMock();
-        $this->_fsm->expects($this->once())->method('getTimestamp')->will($this->returnValue($expectedLogRecord['timestamp']));
+        $this->_fsm->expects($this->any())->method('getTimestamp')->will($this->returnValue($expectedLogRecord['timestamp']));
         $this->_fsm->setStateSet($stateSet, $log);
         $log = $this->getLog();
         $this->assertSame($expectedLog, $log);
