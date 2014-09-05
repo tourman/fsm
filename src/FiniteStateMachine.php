@@ -20,6 +20,7 @@ class FiniteStateMachine
     const EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_INVALID_TYPE_ACTION = 210;
     const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_METHOD = 211;
     const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_NON_PUBLIC_METHOD = 212;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_WITH_STATE_WITH_NO_REFERENCE_TO = 213;
 
     const EXCEPTION_NO_DEFAULT_SYMBOL = 120;
     const EXCEPTION_ABSENT_STATE = 121;
@@ -130,6 +131,18 @@ class FiniteStateMachine
                     throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to non-public method {$destination['action']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_NON_PUBLIC_METHOD);
                 }
             }
+        }
+        $linkedStates = array();
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                $linkedStates[] = $destination['state'];
+            }
+        }
+        $linkedStates = array_unique($linkedStates);
+        $nonLinkedStates = array_diff(array_slice($states, 1), $linkedStates);
+        if ($nonLinkedStates) {
+            $nonLinkedState = array_shift($nonLinkedStates);
+            throw new InvalidArgumentException("Argument \$stateSet has invalid value: there is a state $nonLinkedState with no reference to", self::EXCEPTION_STATE_SET_WITH_DESTINATION_WITH_STATE_WITH_NO_REFERENCE_TO);
         }
         return;
         /***************************/

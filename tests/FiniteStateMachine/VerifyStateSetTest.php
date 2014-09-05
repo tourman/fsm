@@ -17,6 +17,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException
+ * public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException
  * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
  */
 /**
@@ -1053,6 +1054,84 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideStateSetsWithStateWithNoReferenceTo()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'action' => 'close',
+                            'state' => 'CLOSE',
+                        ),
+                        'close' => array(
+                            'action' => 'close',
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        '*' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                    'EXTRA_STATE' => array(
+                        '*' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                ),
+                'state' => 'EXTRA_STATE',
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'action' => 'close',
+                            'state' => 'CLOSE',
+                        ),
+                        'close' => array(
+                            'action' => 'close',
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                    'EXTRA_STATE_1' => array(
+                        '*' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        '*' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                    'EXTRA_STATE_2' => array(
+                        '*' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                ),
+                'state' => 'EXTRA_STATE_1',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithStateWithNoReferenceTo
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 213
+     */
+    public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException($stateSet, $state)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("there is a state $state with no reference to", $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
@@ -1358,7 +1437,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         $this->_fsm->verifyStateSet($stateSet);
     }
 
-    public function provideStateSetsWithStateWithNoReferenceTo()
+    public function _provideStateSetsWithStateWithNoReferenceTo()
     {
         return array(
             array(
@@ -1393,7 +1472,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @expectedExceptionCode 125
      * @dataProvider provideStateSetsWithStateWithNoReferenceTo
      */
-    public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException($stateSet)
+    public function _test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException($stateSet)
     {
         $this->_fsm->verifyStateSet($stateSet);
     }
