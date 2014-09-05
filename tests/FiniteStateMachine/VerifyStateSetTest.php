@@ -350,6 +350,33 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideStateSetsWithoutDefaultSymbol()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        'reinit' => array(
+                            'state' => 'INIT',
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithoutDefaultSymbol
+     * @expectedException Exception
+     * @expectedExceptionMessage 5a14dd7e909f307a5ce6009fb9a8c506
+     */
+    public function test_VerifyStateSet_StateHasNoDefaultSymbol_DoesNotThrowException($stateSet)
+    {
+        $this->_fsm->verifyStateSet($stateSet);
+        throw new Exception('5a14dd7e909f307a5ce6009fb9a8c506');
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
