@@ -16,6 +16,7 @@ class FiniteStateMachine
     const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL = 206;
     const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_DESTINATION = 207;
     const EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_NO_STATE = 208;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_STATE = 209;
 
     const EXCEPTION_NO_DEFAULT_SYMBOL = 120;
     const EXCEPTION_ABSENT_STATE = 121;
@@ -87,6 +88,13 @@ class FiniteStateMachine
             foreach ($symbolSet as $symbol => $destination) {
                 if (!isset($destination['state'])) {
                     throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has no state for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_NO_STATE);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!array_key_exists($destination['state'], $stateSet)) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent state {$destination['state']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_STATE);
                 }
             }
         }

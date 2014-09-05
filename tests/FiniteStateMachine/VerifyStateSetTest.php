@@ -633,6 +633,66 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideStateSetsWithDestinationRefersToAbsentState()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'SOMETHING',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'ERROR',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        ),
+                    ),
+                ),
+                'state' => 'CHECKOUT',
+                'symbol' => 'close',
+                'absentState' => 'SOMETHING',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithDestinationRefersToAbsentState
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 209
+     */
+    public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException($stateSet, $state, $symbol, $absentState)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("destination refers to absent state $absentState for state $state and symbol $symbol", $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
