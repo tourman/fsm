@@ -16,7 +16,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
  * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException
- * public function test_VerifyStateSet_DestinationRefersToNonpublicMethod_ThrowsException
+ * public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException
  * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
  */
 /**
@@ -990,6 +990,65 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         } catch (InvalidArgumentException $e) {
             $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
             $this->assertStringEndsWith("destination refers to absent method $absentMethod for state $state and symbol $symbol", $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function provideStateSetsWithDestinationRefersToNonPublicMethod()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CLOSE',
+                            'action' => '_close',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        ),
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                ),
+                'state' => 'CHECKOUT',
+                'symbol' => 'close',
+                'method' => '_close',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithDestinationRefersToNonPublicMethod
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 212
+     */
+    public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException($stateSet, $state, $symbol, $method)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("destination refers to non-public method $method for state $state and symbol $symbol", $e->getMessage());
             throw $e;
         }
     }
