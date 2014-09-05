@@ -14,6 +14,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException
  * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
+ * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
  * public function test_VerifyStateSet_DestinationRefetsToAbsentMethod_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToNonpublicMethod_ThrowsException
  * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
@@ -689,6 +690,247 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         } catch (InvalidArgumentException $e) {
             $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
             $this->assertStringEndsWith("destination refers to absent state $absentState for state $state and symbol $symbol", $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function provideStateSetsWithDestinationHasInvalidTypeAction()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => false,
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        ),
+                    ),
+                ),
+                'state' => 'CHECKOUT',
+                'symbol' => 'error',
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 1,
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        ),
+                    ),
+                ),
+                'state' => 'CHECKOUT',
+                'symbol' => 'close',
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                            'action' => 1.1,
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        ),
+                    ),
+                ),
+                'state' => 'FAIL',
+                'symbol' => '*',
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => array(),
+                        ),
+                    ),
+                ),
+                'state' => 'CLOSE',
+                'symbol' => 'error',
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                            'action' => new stdClass(),
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        ),
+                    ),
+                ),
+                'state' => 'INIT',
+                'symbol' => '*',
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => null,
+                        ),
+                    ),
+                ),
+                'state' => 'CLOSE',
+                'symbol' => 'error',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithDestinationHasInvalidTypeAction
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 210
+     */
+    public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException($stateSet, $state, $symbol)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("destination has invalid type action for state $state and symbol $symbol", $e->getMessage());
             throw $e;
         }
     }
