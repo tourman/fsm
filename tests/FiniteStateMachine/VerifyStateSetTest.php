@@ -196,8 +196,6 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
                 'stateSet' => array(
                     'INIT' => array(
                     ),
-                    'CLOSE' => array(
-                    ),
                 ),
             ),
             array(
@@ -245,6 +243,56 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
             $this->assertStringEndsWith("first state is empty", $e->getMessage());
             throw $e;
         }
+    }
+
+    public function provideStateSetsWithEmptyNonFirstState()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        'close' => array(
+                            'state' => 'CLOSE',
+                            'action' => 'close',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                    ),
+                ),
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        'close' => array(
+                            'state' => 'CLOSE',
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'FAIL' => array(
+                        'continue' => array(
+                            'state' => 'INIT',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithEmptyNonFirstState
+     * @expectedException Exception
+     * @expectedExceptionMessage 5a14dd7e909f307a5ce6009fb9a8c505
+     */
+    public function test_VerifyStateSet_NonFirstStateIsEmpty_DoesNotThrowException($stateSet)
+    {
+        $this->_fsm->verifyStateSet($stateSet);
+        throw new Exception('5a14dd7e909f307a5ce6009fb9a8c505');
     }
 
     public function provideInvalidTypeArguments()
