@@ -575,6 +575,64 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideStateSetsWithDestinationHasNoState()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'action' => 'close',
+                        ),
+                        'error' => array(
+                            'state' => 'ERROR',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        ),
+                    ),
+                ),
+                'state' => 'CHECKOUT',
+                'symbol' => 'close',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithDestinationHasNoState
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 208
+     */
+    public function test_VerifyStateSet_DestinationHasNoState_ThrowsException($stateSet, $state, $symbol)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("destination has no state for state $state and symbol $symbol", $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
