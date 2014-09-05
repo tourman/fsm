@@ -295,6 +295,61 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         throw new Exception('5a14dd7e909f307a5ce6009fb9a8c505');
     }
 
+    public function provideStateSetWithInvalidTypeSymbol()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                            'action' => 'retry',
+                        ),
+                    ),
+                    'INTEGER' => array(
+                        0 => array(
+                            'state' => 'INIT',
+                        ),
+                    ),
+                ),
+                'state' => 'INTEGER',
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                            'action' => 'retry',
+                        ),
+                    ),
+                    'BOOL' => array(
+                        false => array(
+                            'state' => 'INIT',
+                        ),
+                    ),
+                ),
+                'state' => 'BOOL',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetWithInvalidTypeSymbol
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 206
+     */
+    public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException($stateSet, $state)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("invalid type symbol for state $state", $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
