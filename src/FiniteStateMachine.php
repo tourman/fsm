@@ -144,49 +144,6 @@ class FiniteStateMachine
             $nonLinkedState = array_shift($nonLinkedStates);
             throw new InvalidArgumentException("Argument \$stateSet has invalid value: there is a state $nonLinkedState with no reference to", self::EXCEPTION_STATE_SET_WITH_DESTINATION_WITH_STATE_WITH_NO_REFERENCE_TO);
         }
-        return;
-        /***************************/
-        if (!is_array($stateSet)) {
-            throw new InvalidArgumentException('Argument $stateSet has invalid type', self::EXCEPTION_INVALID_TYPE);
-        }
-        if (!$stateSet) {
-            throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty array", self::EXCEPTION_INVALID_VALUE);
-        }
-        foreach ($stateSet as $state => $symbolSet) {
-            if (!is_array($symbolSet)) {
-                throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid symbol set for state \"$state\"", self::EXCEPTION_INVALID_VALUE);
-            }
-            foreach ($symbolSet as $symbol => $destination) {
-                if (!is_array($destination)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid destination for symbol \"$symbol\"", self::EXCEPTION_INVALID_VALUE);
-                }
-                if (!$destination) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty destination for symbol \"$symbol\"", self::EXCEPTION_INVALID_VALUE);
-                }
-            }
-        }
-        $reflection = new ReflectionClass($this);
-        $linkedStates = array();
-        foreach ($stateSet as $state => $symbolSet) {
-            foreach ($symbolSet as $symbol => $destination) {
-                if (!array_key_exists('state', $destination)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: there is no state for symbol \"$symbol\"", self::EXCEPTION_NO_STATE);
-                }
-                if (!array_key_exists($destination['state'], $stateSet)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: symbol \"$symbol\" refers to the absent state", self::EXCEPTION_ABSENT_STATE);
-                }
-                if (isset($destination['action'])) {
-                    if (!$reflection->hasMethod($destination['action'])) {
-                        throw new InvalidArgumentException("Argument \$stateSet has invalid value: symbol \"$symbol\" refers to the absent method", self::EXCEPTION_ABSENT_METHOD);
-                    }
-                    $method = $reflection->getMethod($destination['action']);
-                    if (!$method->isPublic()) {
-                        throw new InvalidArgumentException("Argument \$stateSet has invalid value: symbol \"$symbol\" refers to the nonpublic method", self::EXCEPTION_NONPUBLIC_METHOD);
-                    }
-                }
-                $linkedStates[] = $destination['state'];
-            }
-        }
         return true;
     }
 
