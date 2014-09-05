@@ -189,6 +189,64 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
     }
 
+    public function provideStateSetsWithEmptyFirstState()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                    ),
+                    'CLOSE' => array(
+                    ),
+                ),
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                    ),
+                    'CLOSE' => array(
+                        '*' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                ),
+            ),
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                    ),
+                    'CLOSE' => array(
+                        '*' => array(
+                            'state' => 'CLOSE',
+                            'action' => 'repeat',
+                        ),
+                        'retry' => array(
+                            'state' => 'INIT',
+                            'action' => 'retry',
+                        ),
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithEmptyFirstState
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 205
+     */
+    public function test_VerifyStateSet_FirstStateIsEmpty_ThrowsException($stateSet)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("first state is empty", $e->getMessage());
+            throw $e;
+        }
+    }
+
     public function provideInvalidTypeArguments()
     {
         return array(
