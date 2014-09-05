@@ -15,7 +15,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
  * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
- * public function test_VerifyStateSet_DestinationRefetsToAbsentMethod_ThrowsException
+ * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToNonpublicMethod_ThrowsException
  * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
  */
@@ -931,6 +931,65 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         } catch (InvalidArgumentException $e) {
             $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
             $this->assertStringEndsWith("destination has invalid type action for state $state and symbol $symbol", $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function provideStateSetsWithDestinationRefersToAbsentMethod()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'checkout' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'checkout',
+                        ),
+                    ),
+                    'CHECKOUT' => array(
+                        'close' => array(
+                            'state' => 'CHECKOUT',
+                            'action' => 'ba7c8008a3b9386afe9f558227f104b1',
+                        ),
+                        'error' => array(
+                            'state' => 'FAIL',
+                            'action' => 'error',
+                        )
+                    ),
+                    'FAIL' => array(
+                        '*' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                    'CLOSE' => array(
+                        'error' => array(
+                            'state' => 'FAIL',
+                        ),
+                    ),
+                ),
+                'state' => 'CHECKOUT',
+                'symbol' => 'close',
+                'absentMethod' => 'ba7c8008a3b9386afe9f558227f104b1',
+            ),
+        );
+    }
+
+    /**
+     * @group issue2
+     * @dataProvider provideStateSetsWithDestinationRefersToAbsentMethod
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 211
+     */
+    public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException($stateSet, $state, $symbol, $absentMethod)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
+            $this->assertStringEndsWith("destination refers to absent method $absentMethod for state $state and symbol $symbol", $e->getMessage());
             throw $e;
         }
     }

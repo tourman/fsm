@@ -18,6 +18,7 @@ class FiniteStateMachine
     const EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_NO_STATE = 208;
     const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_STATE = 209;
     const EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_INVALID_TYPE_ACTION = 210;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_METHOD = 211;
 
     const EXCEPTION_NO_DEFAULT_SYMBOL = 120;
     const EXCEPTION_ABSENT_STATE = 121;
@@ -103,6 +104,17 @@ class FiniteStateMachine
             foreach ($symbolSet as $symbol => $destination) {
                 if (array_key_exists('action', $destination) && !is_string($destination['action'])) {
                     throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has invalid type action for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_INVALID_TYPE_ACTION);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!array_key_exists('action', $destination)) {
+                    continue;
+                }
+                $class = new ReflectionClass($this);
+                if (!$class->hasMethod($destination['action'])) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent method {$destination['action']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_METHOD);
                 }
             }
         }
