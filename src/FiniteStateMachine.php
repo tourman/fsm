@@ -9,12 +9,24 @@ class FiniteStateMachine
     const EXCEPTION_STATES_ARE_SET = 110;
     const EXCEPTION_STATES_ARE_NOT_SET = 111;
 
+    const EXCEPTION_STATE_SET_IS_EMPTY = 202;
+    const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_STATE = 203;
+    const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL_SET = 204;
+    const EXCEPTION_STATE_SET_WITH_EMPTY_FIRST_STATE = 205;
+    const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL = 206;
+    const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_DESTINATION = 207;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_NO_STATE = 208;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_STATE = 209;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_INVALID_TYPE_ACTION = 210;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_METHOD = 211;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_NON_PUBLIC_METHOD = 212;
+    const EXCEPTION_STATE_SET_WITH_DESTINATION_WITH_STATE_WITH_NO_REFERENCE_TO = 213;
+
     const EXCEPTION_NO_DEFAULT_SYMBOL = 120;
     const EXCEPTION_ABSENT_STATE = 121;
     const EXCEPTION_ABSENT_METHOD = 122;
     const EXCEPTION_NONPUBLIC_METHOD = 123;
     const EXCEPTION_NO_STATE = 124;
-    const EXCEPTION_UNLINKED_STATE = 125;
 
     const EXCEPTION_INVALID_TYPE_SYMBOL = 131;
     const EXCEPTION_SYMBOL_IS_OUT_OF_ALPHABET = 132;
@@ -46,51 +58,91 @@ class FiniteStateMachine
             throw new InvalidArgumentException('Argument $stateSet has invalid type', self::EXCEPTION_INVALID_TYPE);
         }
         if (!$stateSet) {
-            throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty array", self::EXCEPTION_INVALID_VALUE);
+            throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty array", self::EXCEPTION_STATE_SET_IS_EMPTY);
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            if (!is_string($state)) {
+                throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type state", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_STATE);
+            }
         }
         foreach ($stateSet as $state => $symbolSet) {
             if (!is_array($symbolSet)) {
-                throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid symbol set for state \"$state\"", self::EXCEPTION_INVALID_VALUE);
-            }
-            if (!$symbolSet) {
-                throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty symbol set for state \"$state\"", self::EXCEPTION_INVALID_VALUE);
-            }
-            foreach ($symbolSet as $symbol => $destination) {
-                if (!is_array($destination)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid destination for symbol \"$symbol\"", self::EXCEPTION_INVALID_VALUE);
-                }
-                if (!$destination) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: empty destination for symbol \"$symbol\"", self::EXCEPTION_INVALID_VALUE);
-                }
-            }
-        }
-        $reflection = new ReflectionClass($this);
-        $linkedStates = array();
-        foreach ($stateSet as $state => $symbolSet) {
-            foreach ($symbolSet as $symbol => $destination) {
-                if (!array_key_exists('state', $destination)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: there is no state for symbol \"$symbol\"", self::EXCEPTION_NO_STATE);
-                }
-                if (!array_key_exists($destination['state'], $stateSet)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: symbol \"$symbol\" refers to the absent state", self::EXCEPTION_ABSENT_STATE);
-                }
-                if (isset($destination['action'])) {
-                    if (!$reflection->hasMethod($destination['action'])) {
-                        throw new InvalidArgumentException("Argument \$stateSet has invalid value: symbol \"$symbol\" refers to the absent method", self::EXCEPTION_ABSENT_METHOD);
-                    }
-                    $method = $reflection->getMethod($destination['action']);
-                    if (!$method->isPublic()) {
-                        throw new InvalidArgumentException("Argument \$stateSet has invalid value: symbol \"$symbol\" refers to the nonpublic method", self::EXCEPTION_NONPUBLIC_METHOD);
-                    }
-                }
-                $linkedStates[] = $destination['state'];
+                throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type symbol set for state $state", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL_SET);
             }
         }
         $states = array_keys($stateSet);
-        $unlinkedStates = array_diff($states, $linkedStates);
-        if ($unlinkedStates) {
-            $unlinkedStates = implode(',', $unlinkedStates);
-            throw new InvalidArgumentException("Argument \$stateSet has invalid value: there are states that are not linked ($unlinkedStates)", self::EXCEPTION_UNLINKED_STATE);
+        if (!$stateSet[$states[0]]) {
+            throw new InvalidArgumentException("Argument \$stateSet has invalid value: first state is empty", self::EXCEPTION_STATE_SET_WITH_EMPTY_FIRST_STATE);
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!is_string($symbol)) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type symbol for state $state", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!is_array($destination)) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type destination for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_DESTINATION);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!isset($destination['state'])) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has no state for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_NO_STATE);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!array_key_exists($destination['state'], $stateSet)) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent state {$destination['state']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_STATE);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (array_key_exists('action', $destination) && !is_string($destination['action'])) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has invalid type action for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_INVALID_TYPE_ACTION);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!array_key_exists('action', $destination)) {
+                    continue;
+                }
+                $class = new ReflectionClass($this);
+                if (!$class->hasMethod($destination['action'])) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent method {$destination['action']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_METHOD);
+                }
+            }
+        }
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                if (!array_key_exists('action', $destination)) {
+                    continue;
+                }
+                $class = new ReflectionClass($this);
+                $method = $class->getMethod($destination['action']);
+                if (!$method->isPublic()) {
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to non-public method {$destination['action']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_NON_PUBLIC_METHOD);
+                }
+            }
+        }
+        $linkedStates = array();
+        foreach ($stateSet as $state => $symbolSet) {
+            foreach ($symbolSet as $symbol => $destination) {
+                $linkedStates[] = $destination['state'];
+            }
+        }
+        $linkedStates = array_unique($linkedStates);
+        $nonLinkedStates = array_diff(array_slice($states, 1), $linkedStates);
+        if ($nonLinkedStates) {
+            $nonLinkedState = array_shift($nonLinkedStates);
+            throw new InvalidArgumentException("Argument \$stateSet has invalid value: there is a state $nonLinkedState with no reference to", self::EXCEPTION_STATE_SET_WITH_DESTINATION_WITH_STATE_WITH_NO_REFERENCE_TO);
         }
         return true;
     }
