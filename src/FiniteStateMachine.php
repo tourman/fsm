@@ -241,9 +241,19 @@ class FiniteStateMachine
             if (!is_string($reason)) {
                 throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_TYPE_REASON);
             }
-            if (!in_array($reason, array('init', 'action', 'reset'))) {
+            if (!in_array($reason, array('init', 'action', 'reset', 'sleep', 'wakeup'))) {
                 throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_VALUE_REASON);
             }
+        }
+        if ($log[0]['reason'] != 'init') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index 0, required values: (init)", 124);
+        }
+        $lastLogRecordIndex = sizeof($log) - 1;
+        if ($log[$lastLogRecordIndex]['reason'] != 'sleep') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $lastLogRecordIndex, required values: (sleep)", 125);
+        }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            $reason = $logRecord['reason'];
             $firstLogRecord = !(bool)$logRecordIndex;
             $initReason = $reason == 'init';
             if ($firstLogRecord xor $initReason) {
@@ -336,13 +346,6 @@ class FiniteStateMachine
         $length = sizeof($log);
         if ($length < 2) {
             throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length: $length", self::EXCEPTION_INVALID_LENGTH_LOG);
-        }
-        if ($log[0]['reason'] != 'init') {
-            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index 0, required values: (init)", 124);
-        }
-        $lastLogRecordIndex = sizeof($log) - 1;
-        if ($log[$lastLogRecordIndex]['reason'] != 'sleep') {
-            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $lastLogRecordIndex, required values: (sleep)", 125);
         }
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_array($logRecord)) {
