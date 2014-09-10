@@ -337,6 +337,9 @@ class FiniteStateMachine
         if ($length < 2) {
             throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length: $length", self::EXCEPTION_INVALID_LENGTH_LOG);
         }
+        if ($log[0]['reason'] != 'init') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index 0, required values: (init)", 124);
+        }
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_array($logRecord)) {
                 throw new InvalidArgumentException('Argument $log has invalid value', self::EXCEPTION_INVALID_VALUE);
