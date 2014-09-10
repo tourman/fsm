@@ -21,6 +21,8 @@ class FiniteStateMachine
     const EXCEPTION_SYMBOL_IS_OUT_OF_ALPHABET = 132;
     const EXCEPTION_SYMBOL_IS_OUT_OF_STATE = 133;
 
+    const EXCEPTION_INVALID_LENGTH_LOG = 301;
+
     const EXCEPTION_LOG_WITH_INVALID_TYPE_STATE = 111;
     const EXCEPTION_LOG_WITH_INVALID_VALUE_STATE = 112;
     const EXCEPTION_LOG_WITH_INVALID_STATE_SEQUENCE = 113;
@@ -330,6 +332,10 @@ class FiniteStateMachine
         $this->verifyStateSet($stateSet);
         if (!is_array($log)) {
             throw new InvalidArgumentException('Argument $log has invalid type', self::EXCEPTION_INVALID_TYPE);
+        }
+        $length = sizeof($log);
+        if ($length < 2) {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length: $length", self::EXCEPTION_INVALID_LENGTH_LOG);
         }
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_array($logRecord)) {

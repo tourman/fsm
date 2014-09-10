@@ -6,6 +6,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_Default_CallsVerifyStateSet()
  * public function test_VerifyLog_InvalidTypeLog_ThrowsException()
  * public function test_VerifyLog_InvalidStructureLog_ThrowsException()
+ * public function test_VerifyLog_InvalidLengthLog_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidKeys_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidTypeState_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidValueState_ThrowsException()
@@ -128,6 +129,48 @@ class Fsm_VerifyLogTest extends FsmTestCase
             array(null),
         );
         return $this->_provideLogs($logs);
+    }
+
+    public function provideInvalidLengthLogs()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(),
+                'length' => 0,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000000',
+                    ),
+                ),
+                'length' => 1,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_reason
+     * @dataProvider provideInvalidLengthLogs
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 301
+     */
+    public function test_VerifyLog_InvalidLengthLog_ThrowsException($stateSet, $log, $length)
+    {
+        try {
+            $this->_fsm->verifyLog($stateSet, $log);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
+            $this->assertStringEndsWith("invalid log length: $length", $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
