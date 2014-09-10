@@ -340,6 +340,10 @@ class FiniteStateMachine
         if ($log[0]['reason'] != 'init') {
             throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index 0, required values: (init)", 124);
         }
+        $lastLogRecordIndex = sizeof($log) - 1;
+        if ($log[$lastLogRecordIndex]['reason'] != 'sleep') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $lastLogRecordIndex, required values: (sleep)", 125);
+        }
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_array($logRecord)) {
                 throw new InvalidArgumentException('Argument $log has invalid value', self::EXCEPTION_INVALID_VALUE);
