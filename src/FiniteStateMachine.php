@@ -254,6 +254,13 @@ class FiniteStateMachine
         }
         foreach ($log as $logRecordIndex => $logRecord) {
             $reason = $logRecord['reason'];
+            if ($reason == 'wakeup' && $log[$logRecordIndex - 1]['reason'] != 'sleep') {
+                $logRecordIndex--;
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex, required values: (sleep)", 126);
+            }
+        }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            $reason = $logRecord['reason'];
             $firstLogRecord = !(bool)$logRecordIndex;
             $initReason = $reason == 'init';
             if ($firstLogRecord xor $initReason) {

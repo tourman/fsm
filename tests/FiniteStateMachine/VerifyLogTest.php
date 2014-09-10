@@ -15,6 +15,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_LogWithInvalidValueReason_ThrowsException()
  * public fucntion test_VerifyLog_LogWithInvalidFirstReason_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidLastReason_ThrowsException()
+ * public function test_VerifyLog_LogWithWakeupNotAfterSleep_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidReasonSequence_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidTypeSymbol_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidValueSymbol_ThrowsException()
@@ -423,6 +424,110 @@ class Fsm_VerifyLogTest extends FsmTestCase
      * @expectedExceptionCode 125
      */
     public function test_VerifyLog_LogWithInvalidLastReason_ThrowsException($stateSet, $log, $logRecordIndex, $requiredValues)
+    {
+        $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'reason', $requiredValues);
+    }
+
+    public function provideLogsWithWakeupNotAfterSleep()
+    {
+        $argumentSets = array();
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $logTemplates = array(
+            array(
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '127.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '127.000002',
+                    ),
+                    array(
+                        'state' => null,
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '127.000002',
+                    ),
+                    array(
+                        'state' => null,
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => '127.000003',
+                    ),
+                    array(
+                        'state' => null,
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '127.000004',
+                    ),
+                ),
+                'logRecordIndex' => 2,
+            ),
+            array(
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '127.000001',
+                    ),
+                    array(
+                        'state' => null,
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '127.000001',
+                    ),
+                    array(
+                        'state' => null,
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => '127.000002',
+                    ),
+                    array(
+                        'state' => null,
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '127.000003',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+        );
+        $invalidReasons = array(
+            'action',
+            'init',
+            'reset',
+        );
+        foreach ($logTemplates as $logTemplate) {
+            foreach ($invalidReasons as $invalidReason) {
+                $log = $logTemplate['log'];
+                $logRecordIndex = $logTemplate['logRecordIndex'];
+                $log[$logRecordIndex]['reason'] = $invalidReason;
+                $argumentSet = array(
+                    'stateSet' => $stateSet,
+                    'log' => $log,
+                    'logRecordIndex' => $logRecordIndex,
+                    'requiredValues' => array('sleep'),
+                );
+                $argumentSets[] = $argumentSet;
+            }
+        }
+        return $argumentSets;
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_reason
+     * @dataProvider provideLogsWithWakeupNotAfterSleep
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 126
+     */
+    public function test_VerifyLog_LogWithWakeupNotAfterSleep_ThrowsException($stateSet, $log, $logRecordIndex, $requiredValues)
     {
         $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'reason', $requiredValues);
     }
