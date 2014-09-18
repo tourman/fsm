@@ -14,7 +14,6 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_LogWithInvalidTypeReason_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidValueReason_ThrowsException()
  * public fucntion test_VerifyLog_LogWithInvalidFirstReason_ThrowsException()
- * public function test_VerifyLog_LogWithInvalidLastReason_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidReasonSequence_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidTypeSymbol_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidValueSymbol_ThrowsException()
@@ -389,40 +388,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
      * @expectedExceptionCode 124
      */
     public function test_VerifyLog_LogWithInvalidFirstReason_ThrowsException($stateSet, $log, $logRecordIndex, $requiredValues)
-    {
-        $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'reason', $requiredValues);
-    }
-
-    public function provideLogsWithInvalidLastReason()
-    {
-        $argumentSets = array();
-        $invalidReasons = array(
-            'init',
-            'action',
-            'reset',
-            'wakeup',
-        );
-        $templateArgumentSets = $this->provideValidLogs();
-        foreach ($invalidReasons as $invalidReason) {
-            $argumentSet = $templateArgumentSets[rand(0, sizeof($templateArgumentSets) - 1)];
-            $log = &$argumentSet['log'];
-            $logRecordIndex = sizeof($log) - 1;
-            $log[ $logRecordIndex ]['reason'] = $invalidReason;
-            $argumentSet['logRecordIndex'] = $logRecordIndex;
-            $argumentSet['requiredValues'] = array('sleep');
-            $argumentSets[] = $argumentSet;
-        }
-        return $argumentSets;
-    }
-
-    /**
-     * @group issue1
-     * @group issue1_reason
-     * @dataProvider provideLogsWithInvalidLastReason
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionCode 125
-     */
-    public function test_VerifyLog_LogWithInvalidLastReason_ThrowsException($stateSet, $log, $logRecordIndex, $requiredValues)
     {
         $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'reason', $requiredValues);
     }
