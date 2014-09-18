@@ -13,7 +13,6 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_LogWithInvalidStateSequence_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidTypeReason_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidValueReason_ThrowsException()
- * public fucntion test_VerifyLog_LogWithInvalidFirstReason_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidReasonSequence_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidTypeSymbol_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidValueSymbol_ThrowsException()
@@ -68,19 +67,14 @@ class Fsm_VerifyLogTest extends FsmTestCase
         }
     }
 
-    protected function _testLogSequence($stateSet, $log, $logRecordIndex = null, $variable = null, $requiredValues = array())
+    protected function _testLogSequence($stateSet, $log, $logRecordIndex = null, $variable = null)
     {
         try {
             $this->_fsm->verifyLog($stateSet, $log);
         } catch (InvalidArgumentException $e) {
             $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
             if (!is_null($logRecordIndex) && !is_null($variable)) {
-                if ($requiredValues) {
-                    $requiredValues = implode(', ', $requiredValues);
-                    $this->assertStringEndsWith("invalid value $variable in sequence at index $logRecordIndex, required values: ($requiredValues)", $e->getMessage());
-                } else {
-                    $this->assertStringEndsWith("invalid value $variable in sequence at index $logRecordIndex", $e->getMessage());
-                }
+                $this->assertStringEndsWith("invalid value $variable in sequence at index $logRecordIndex", $e->getMessage());
             }
             throw $e;
         }
@@ -358,38 +352,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
             );
         }
         return $argumentSet;
-    }
-
-    public function provideLogsWithInvalidFirstReason()
-    {
-        $argumentSets = array();
-        $invalidReasons = array(
-            'action',
-            'reset',
-            'wakeup',
-            'sleep',
-        );
-        $templateArgumentSets = $this->provideValidLogs();
-        foreach ($invalidReasons as $invalidReason) {
-            $argumentSet = $templateArgumentSets[rand(0, sizeof($templateArgumentSets) - 1)];
-            $argumentSet['log'][0]['reason'] = $invalidReason;
-            $argumentSet['logRecordIndex'] = 0;
-            $argumentSet['requiredValues'] = array('init');
-            $argumentSets[] = $argumentSet;
-        }
-        return $argumentSets;
-    }
-
-    /**
-     * @group issue1
-     * @group issue1_reason
-     * @dataProvider provideLogsWithInvalidFirstReason
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionCode 124
-     */
-    public function test_VerifyLog_LogWithInvalidFirstReason_ThrowsException($stateSet, $log, $logRecordIndex, $requiredValues)
-    {
-        $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'reason', $requiredValues);
     }
 
     /**
