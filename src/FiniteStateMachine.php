@@ -270,12 +270,17 @@ class FiniteStateMachine
 
     protected function _verifyLogInitReasonPosition(array $reasons)
     {
+        $numReasons = sizeof($reasons);
         foreach ($reasons as $reasonIndex => $reason) {
             if (!$reasonIndex) {
                 continue;
             }
             if ($reason == 'init') {
-                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $reasonIndex", 501);
+                if ($reasonIndex < $numReasons - 1) {
+                    throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $reasonIndex", 501);
+                } else {
+                    throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $reasonIndex", 502);
+                }
             }
         }
     }

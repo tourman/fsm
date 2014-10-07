@@ -32,24 +32,6 @@ class Fsm_VerifyLog_Reason_InitTest extends Fsm_VerifyLog_ReasonTestCase
                         'state' => 'INIT',
                         'reason' => 'init',
                         'symbol' => null,
-                        'timestamp' => '1.000000',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '1.000001',
-                    ),
-                ),
-                'logRecordIndex' => 1,
-            ),
-            array(
-                'stateSet' => $stateSet,
-                'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => null,
                         'timestamp' => '12.000000',
                     ),
                     array(
@@ -78,6 +60,49 @@ class Fsm_VerifyLog_Reason_InitTest extends Fsm_VerifyLog_ReasonTestCase
      * @expectedExceptionCode 501
      */
     public function test_VerifyLog_Reason_Init_MiddlePosition_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'reason');
+    }
+
+    public function provideLogsWithInitReasonInTheLastPosition()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '12.000000',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '12.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '12.000002',
+                    ),
+                ),
+                'logRecordIndex' => 2,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_reason
+     * @dataProvider provideLogsWithInitReasonInTheLastPosition
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 502
+     */
+    public function test_VerifyLog_Reason_Init_LastPosition_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'reason');
     }
