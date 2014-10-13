@@ -18,6 +18,7 @@
             <file>FiniteStateMachine/VerifySymbolTest.php</file>
             <file>FiniteStateMachine/VerifyLogTest.php</file>
             <file>FiniteStateMachine/VerifyLog/ReasonTest.php</file>
+            <file>FiniteStateMachine/VerifyLog/StateTest.php</file>
             <file>FiniteStateMachine/DisplayLogTest.php</file>
             <file>FiniteStateMachine/GetTimestampTest.php</file>
             <file>FiniteStateMachine/ResetTest.php</file>

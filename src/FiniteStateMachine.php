@@ -331,6 +331,9 @@ class FiniteStateMachine
 
     protected function _verifyLogState($stateSet, $log)
     {
+        $initState = array_shift(array_keys($stateSet));
+        $this->_verifyLogStateWithInitReason($stateSet, $log);
+        return;
         $states = $this->_getStates($stateSet);
         $allowedTransitions = $this->_getAllowedTransitions($stateSet);
         foreach ($log as $logRecordIndex => $logRecord) {
@@ -357,6 +360,19 @@ class FiniteStateMachine
                 //Allowed log record
             } else {
                 throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_STATE_SEQUENCE);
+            }
+        }
+    }
+
+    protected function _verifyLogStateWithInitReason($stateSet, $log)
+    {
+        $initState = array_shift(array_keys($stateSet));
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'init') {
+                continue;
+            }
+            if ($logRecord['state'] != $initState) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", 601);
             }
         }
     }
