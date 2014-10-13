@@ -36,6 +36,7 @@ class Fsm_SleepTest extends FsmTestCase
 
     /**
      * @group issue1
+     * @group issue1_log_sleep
      * @dataProvider provideMethods
      * @expectedException Exception
      * @expectedExceptionMessage 47fcddc8193f1bed347ae752d8b30bbe
@@ -48,6 +49,7 @@ class Fsm_SleepTest extends FsmTestCase
 
     /**
      * @group issue1
+     * @group issue1_log_sleep
      * @dataProvider provideMethods
      * @expectedException RuntimeException
      * @expectedExceptionCode 112
@@ -61,6 +63,7 @@ class Fsm_SleepTest extends FsmTestCase
 
     /**
      * @group issue1
+     * @group issue1_log_sleep
      */
     public function test_Sleep_Default_AppendsSleepItemToLog()
     {

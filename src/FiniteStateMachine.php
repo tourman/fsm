@@ -411,6 +411,9 @@ class FiniteStateMachine
             throw new InvalidArgumentException('Argument $log has invalid type', self::EXCEPTION_INVALID_TYPE);
         }
         $length = sizeof($log);
+        if (!$length) {
+            return true;
+        }
         if ($length < 2) {
             throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length: $length", self::EXCEPTION_INVALID_LENGTH_LOG);
         }
