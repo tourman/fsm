@@ -238,6 +238,7 @@ class FiniteStateMachine
     {
         $this->_verifyLogReasonFirstPosition($log);
         $this->_verifyLogReasonLastPosition($log);
+        $this->_verifyInitReason($log);
         return;
         $reasons = array();
         foreach ($log as $logRecord) {
@@ -285,6 +286,15 @@ class FiniteStateMachine
         $logRecord = array_pop($log);
         if ($logRecord['reason'] != 'sleep') {
             throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", 502);
+        }
+    }
+
+    protected function _verifyInitReason(array $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecordIndex && $logRecord['reason'] == 'init') {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", 503);
+            }
         }
     }
 
