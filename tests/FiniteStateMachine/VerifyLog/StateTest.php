@@ -136,7 +136,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
                         'timestamp' => '147.800802',
                     ),
                     array(
-                        'state' => 'CHECKOUT',
+                        'state' => 'PENDING',
                         'reason' => 'sleep',
                         'symbol' => null,
                         'timestamp' => '148.800800',
@@ -172,7 +172,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
                         'timestamp' => '147.800802',
                     ),
                     array(
-                        'state' => 'CHECKOUT',
+                        'state' => 'INIT',
                         'reason' => 'sleep',
                         'symbol' => null,
                         'timestamp' => '148.800800',
@@ -191,6 +191,103 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      * @expectedExceptionCode 603
      */
     public function test_VerifyLog_ActionReasonWithMismatchedState_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+    }
+
+    public function provideLogsWithSleepReasonWithStateFromNoPreviousRecord()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '147.800800',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '147.800801',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'action',
+                        'symbol' => 'processing',
+                        'timestamp' => '147.800802',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '148.800800',
+                    ),
+                ),
+                'logRecordIndex' => 3,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '147.800800',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '147.800801',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'action',
+                        'symbol' => 'processing',
+                        'timestamp' => '147.800802',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '147.800802',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => '147.800802',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'action',
+                        'symbol' => 'processing',
+                        'timestamp' => '147.800802',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '148.800800',
+                    ),
+                ),
+                'logRecordIndex' => 3,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_state
+     * @dataProvider provideLogsWithSleepReasonWithStateFromNoPreviousRecord
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 604
+     */
+    public function test_VerifyLog_ActionSleepWithStateFromNoPreviousRecord_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
     }
