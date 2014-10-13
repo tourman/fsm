@@ -369,4 +369,71 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
     {
         $this->_testLogType($stateSet, $log, $logRecordIndex, 'reason');
     }
+
+    public function provideLogsWithNotWakepAfterSleep()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStates()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '1.000002',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'action',
+                        'symbol' => 'processing',
+                        'timestamp' => '1.000003',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000004',
+                    ),
+                    array(
+                        'state' => 'PENDING',
+                        'reason' => 'action',
+                        'symbol' => 'pending',
+                        'timestamp' => '1.000005',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => '1.000006',
+                    ),
+                    array(
+                        'state' => 'PENDING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000007',
+                    ),
+                ),
+                'logRecordIndex' => 4,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_reason
+     * @dataProvider provideLogsWithNotWakepAfterSleep
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 504
+     */
+    public function test_VerifyLog_Reason_NotWakeup_AfterSleep_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogType($stateSet, $log, $logRecordIndex, 'reason');
+    }
 }
