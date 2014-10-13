@@ -6,8 +6,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_Reason_TheFirstPosition_NotInit_ThrowsException
  * public function test_VerifyLog_Reason_TheLastPosition_NotSleep_ThrowsException
  * public function test_VerifyLog_Reason_Init_NotAtTheFirstPosition_ThrowsException
- * public function test_VerifyLog_Reason_Wakeup_NotAfterSleep_ThrowsException
- * public function test_VerifyLog_Reason_Sleep_NotAtTheLastPosition_NotBeforeWakeup_ThrowsException
+ * public function test_VerifyLog_Reason_NotWakeup_AfterSleep_ThrowsException
  */
 class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 {
