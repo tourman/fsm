@@ -137,11 +137,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
         return array(
             array(
                 'stateSet' => $stateSet,
-                'log' => array(),
-                'length' => 0,
-            ),
-            array(
-                'stateSet' => $stateSet,
                 'log' => array(
                     array(
                         'state' => 'INIT',
@@ -158,6 +153,7 @@ class Fsm_VerifyLogTest extends FsmTestCase
     /**
      * @group issue1
      * @group issue1_reason
+     * @group issue1_log_verification
      * @dataProvider provideInvalidLengthLogs
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 301
@@ -921,7 +917,102 @@ class Fsm_VerifyLogTest extends FsmTestCase
         $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'timestamp');
     }
 
+    public function provideValidLogs()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(),
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1413277575.008993',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '1413277575.103009',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1413277576.001000',
+                    ),
+                ),
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1413277575.008993',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '1413277575.103009',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'action',
+                        'symbol' => 'processing',
+                        'timestamp' => '1413277576.001000',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'reset',
+                        'symbol' => null,
+                        'timestamp' => '1413277577.002988',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '1413277577.002988',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1413277577.003988',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => '1413277577.003989',
+                    ),
+                    array(
+                        'state' => 'PENDING',
+                        'reason' => 'action',
+                        'symbol' => 'pending',
+                        'timestamp' => '1413277577.004002',
+                    ),
+                    array(
+                        'state' => 'PENDING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1413277578.980772',
+                    ),
+                ),
+            ),
+        );
+    }
+
     /**
+     * @group issue1
+     * @group issue1_log_verification
      * @dataProvider provideValidLogs
      */
     public function test_VerifyLog_ValidArguments_ReturnsTrue($stateSet, $log)
