@@ -521,6 +521,20 @@ class FiniteStateMachine
         }
     }
 
+    protected function _verifyLogSymbolValue($stateSet, $log)
+    {
+        $symbols = array(null);
+        foreach ($stateSet as $state => $symbolSet) {
+            $symbols = array_merge($symbols, array_keys($symbolSet));
+        }
+        $symbols = array_unique($symbols);
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array($logRecord['symbol'], $symbols)) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol at index $logRecordIndex", 712);
+            }
+        }
+    }
+
     protected function _verifyLogSymbolWithInitReason($stateSet, $log)
     {
         foreach ($log as $logRecordIndex => $logRecord) {
