@@ -25,6 +25,19 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
         }
     }
 
+    protected function _testLogValue($stateSet, $log, $logRecordIndex = null, $variable = null)
+    {
+        try {
+            $this->_fsm->verifyLog($stateSet, $log);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
+            if (!is_null($logRecordIndex) && !is_null($variable)) {
+                $this->assertStringEndsWith("invalid value $variable at index $logRecordIndex", $e->getMessage());
+            }
+            throw $e;
+        }
+    }
+
     public function provideLogsWithInvalidTypeReason()
     {
         $stateSet = array_shift(array_shift($this->provideValidStateSets()));
@@ -115,6 +128,44 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
     public function test_VerifyLog_Reason_InvalidType_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_testLogType($stateSet, $log, $logRecordIndex, 'reason');
+    }
+
+    public function provideLogsWithInvalidValueReason()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'someRandomString',
+                        'symbol' => null,
+                        'timestamp' => '1.999887',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.999887',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_reason
+     * @group issue1_type_and_value
+     * @dataProvider provideLogsWithInvalidValueReason
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 512
+     */
+    public function test_VerifyLog_Reason_InvalidValue_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, 'reason');
     }
 
     public function provideLogsWithNotInitFirstPosition()
