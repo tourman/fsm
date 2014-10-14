@@ -306,7 +306,7 @@ class FiniteStateMachine
         $logRecordIndex = sizeof($log) - 1;
         $logRecord = array_pop($log);
         if ($logRecord['reason'] != 'sleep') {
-            throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", 502);
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", 502);
         }
     }
 

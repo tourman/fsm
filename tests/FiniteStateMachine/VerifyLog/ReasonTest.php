@@ -403,7 +403,7 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_Reason_TheLastPosition_NotSleep_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'reason');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, 'reason');
     }
 
     public function provideLogsWithInitNotAtFirstPosition()
