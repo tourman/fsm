@@ -327,7 +327,7 @@ class FiniteStateMachine
                 continue;
             }
             if ($log[ $logRecordIndex - 1 ]['reason'] == 'sleep' && $logRecord['reason'] != 'wakeup') {
-                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", 504);
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", 504);
             }
         }
     }

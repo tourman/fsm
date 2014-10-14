@@ -579,6 +579,6 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_Reason_NotWakeup_AfterSleep_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'reason');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, 'reason');
     }
 }
