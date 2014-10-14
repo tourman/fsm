@@ -3,6 +3,8 @@
 require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../VerifyLogTestCase.php')));
 
 /**
+ * public function test_VerifyLog_State_InvalidType_ThrowsException
+ * public function test_VerifyLog_State_InvalidValue_ThrowsException
  * public function test_VerifyLog_InitReasonWithNotInitState_ThrowsException
  * public function test_VerifyLog_ResetReasonWithNotInitState_ThrowsException
  * public function test_VerifyLog_ActionReasonWithMismatchedState_ThrowsException
@@ -16,12 +18,122 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
         try {
             $this->_fsm->verifyLog($stateSet, $log);
         } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
+            $this->assertInvalidTypeArgumentExceptionMessage($e, 'log');
             if (!is_null($logRecordIndex) && !is_null($variable)) {
-                $this->assertStringEndsWith("invalid value $variable in sequence at index $logRecordIndex", $e->getMessage());
+                $this->assertStringEndsWith("invalid type $variable at index $logRecordIndex", $e->getMessage());
             }
             throw $e;
         }
+    }
+
+    public function provideLogsWithInvalidTypeState()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 1,
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 1.1,
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => array(),
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => new stdClass(),
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => null,
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_state
+     * @group issue1_type_and_value
+     * @dataProvider provideLogsWithInvalidTypeState
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 611
+     */
+    public function test_VerifyLog_State_InvalidType_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
     }
 
     public function provideLogsWithInitReasonWithNotInitState()

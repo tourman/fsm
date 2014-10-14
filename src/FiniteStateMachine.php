@@ -351,6 +351,7 @@ class FiniteStateMachine
 
     protected function _verifyLogState($stateSet, $log)
     {
+        $this->_verifyLogStateType($log);
         $this->_verifyLogStateWithInitReason($stateSet, $log);
         $this->_verifyLogStateWithResetReason($stateSet, $log);
         $this->_verifyLogStateWithActionReason($stateSet, $log);
@@ -383,6 +384,15 @@ class FiniteStateMachine
                 //Allowed log record
             } else {
                 throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_STATE_SEQUENCE);
+            }
+        }
+    }
+
+    protected function _verifyLogStateType($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!is_string($logRecord['state'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type state at index $logRecordIndex", 611);
             }
         }
     }
