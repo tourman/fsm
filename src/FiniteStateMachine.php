@@ -297,7 +297,7 @@ class FiniteStateMachine
     {
         $logRecord = array_shift($log);
         if ($logRecord['reason'] != 'init') {
-            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index 0", 501);
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index 0", 501);
         }
     }
 
@@ -306,7 +306,7 @@ class FiniteStateMachine
         $logRecordIndex = sizeof($log) - 1;
         $logRecord = array_pop($log);
         if ($logRecord['reason'] != 'sleep') {
-            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", 502);
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex", 502);
         }
     }
 
@@ -314,7 +314,7 @@ class FiniteStateMachine
     {
         foreach ($log as $logRecordIndex => $logRecord) {
             if ($logRecordIndex && $logRecord['reason'] == 'init') {
-                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", 503);
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex", 503);
             }
         }
     }
@@ -327,7 +327,7 @@ class FiniteStateMachine
                 continue;
             }
             if ($log[ $logRecordIndex - 1 ]['reason'] == 'sleep' && $logRecord['reason'] != 'wakeup') {
-                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", 504);
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex", 504);
             }
         }
     }
