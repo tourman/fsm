@@ -133,4 +133,143 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
     {
         $this->_testLogType($stateSet, $log, $logRecordIndex, 'symbol');
     }
+
+    public function provideLogsWithResetReasonWithNotEmptySymbol()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'reset',
+                        'symbol' => 'reset',
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'reset',
+                        'symbol' => 1,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'reset',
+                        'symbol' => 1.1,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'reset',
+                        'symbol' => array(),
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'reset',
+                        'symbol' => new stdClass(),
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_symbol
+     * @dataProvider provideLogsWithResetReasonWithNotEmptySymbol
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 702
+     */
+    public function test_VerifyLog_ResetReasonWithNotEmptySymbol_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogType($stateSet, $log, $logRecordIndex, 'symbol');
+    }
 }

@@ -481,6 +481,18 @@ class FiniteStateMachine
         }
     }
 
+    protected function _verifyLogSymbolWithResetReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'reset') {
+                continue;
+            }
+            if (!is_null($logRecord['symbol'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 702);
+            }
+        }
+    }
+
     protected function _verifyLogTimestamp($stateSet, $log)
     {
         foreach ($log as $logRecordIndex => $logRecord) {
