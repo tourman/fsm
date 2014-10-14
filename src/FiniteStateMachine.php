@@ -236,6 +236,7 @@ class FiniteStateMachine
 
     protected function _verifyLogReason($stateSet, $log)
     {
+        $this->_verifyLogReasonType($log);
         $this->_verifyLogReasonFirstPosition($log);
         $this->_verifyLogReasonLastPosition($log);
         $this->_verifyInitReason($log);
@@ -269,6 +270,15 @@ class FiniteStateMachine
             $initReason = $reason == 'init';
             if ($firstLogRecord xor $initReason) {
                 throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_REASON_SEQUENCE);
+            }
+        }
+    }
+
+    protected function _verifyLogReasonType(array $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array(gettype($logRecord['reason']), array('string', 'NULL'))) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", 511);
             }
         }
     }
