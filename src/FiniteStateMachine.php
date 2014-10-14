@@ -297,7 +297,7 @@ class FiniteStateMachine
     {
         $logRecord = array_shift($log);
         if ($logRecord['reason'] != 'init') {
-            throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index 0", 501);
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index 0", 501);
         }
     }
 
