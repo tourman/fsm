@@ -13,28 +13,26 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  */
 class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 {
-    protected function _testLogType($stateSet, $log, $logRecordIndex = null, $variable = null)
+    protected function _testLogType($stateSet, $log, $logRecordIndex, $sequence)
     {
+        $sequence = $sequence ? 'in sequence ' : '';
         try {
             $this->_fsm->verifyLog($stateSet, $log);
         } catch (InvalidArgumentException $e) {
             $this->assertInvalidTypeArgumentExceptionMessage($e, 'log');
-            if (!is_null($logRecordIndex) && !is_null($variable)) {
-                $this->assertStringEndsWith("invalid type $variable at index $logRecordIndex", $e->getMessage());
-            }
+            $this->assertStringEndsWith("invalid type state {$sequence}at index $logRecordIndex", $e->getMessage());
             throw $e;
         }
     }
 
-    protected function _testLogValue($stateSet, $log, $logRecordIndex = null, $variable = null)
+    protected function _testLogValue($stateSet, $log, $logRecordIndex, $sequence)
     {
+        $sequence = $sequence ? 'in sequence ' : '';
         try {
             $this->_fsm->verifyLog($stateSet, $log);
         } catch (InvalidArgumentException $e) {
             $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
-            if (!is_null($logRecordIndex) && !is_null($variable)) {
-                $this->assertStringEndsWith("invalid value $variable at index $logRecordIndex", $e->getMessage());
-            }
+            $this->assertStringEndsWith("invalid value state {$sequence}at index $logRecordIndex", $e->getMessage());
             throw $e;
         }
     }
@@ -146,7 +144,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_State_InvalidType_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+        $this->_testLogType($stateSet, $log, $logRecordIndex, false);
     }
 
     public function provideLogsWithInvalidValueState()
@@ -202,7 +200,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_State_InvalidValue_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogValue($stateSet, $log, $logRecordIndex, 'state');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, false);
     }
 
     public function provideLogsWithInitReasonWithNotInitState()
@@ -239,7 +237,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_InitReasonWithNotInitState_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
 
     public function provideLogsWithResetReasonWithNotInitState()
@@ -288,7 +286,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_ResetReasonWithNotInitState_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
 
     public function provideLogsWithActionReasonWithMismatchState()
@@ -373,7 +371,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_ActionReasonWithMismatchedState_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
 
     public function provideLogsWithSleepReasonWithStateFromNoPreviousRecord()
@@ -470,7 +468,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_ActionSleepWithStateFromNoPreviousRecord_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
 
     public function provideLogsWithWakeupReasonWithStateFromNoPreviousRecord()
@@ -531,6 +529,6 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      */
     public function test_VerifyLog_ActionWakeupWithStateFromNoPreviousRecord_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
 }
