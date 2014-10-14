@@ -26,6 +26,19 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
         }
     }
 
+    protected function _testLogValue($stateSet, $log, $logRecordIndex = null, $variable = null)
+    {
+        try {
+            $this->_fsm->verifyLog($stateSet, $log);
+        } catch (InvalidArgumentException $e) {
+            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
+            if (!is_null($logRecordIndex) && !is_null($variable)) {
+                $this->assertStringEndsWith("invalid value $variable at index $logRecordIndex", $e->getMessage());
+            }
+            throw $e;
+        }
+    }
+
     public function provideLogsWithInvalidTypeState()
     {
         $stateSet = array_shift(array_shift($this->provideValidStateSets()));
@@ -134,6 +147,62 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
     public function test_VerifyLog_State_InvalidType_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_testLogType($stateSet, $log, $logRecordIndex, 'state');
+    }
+
+    public function provideLogsWithInvalidValueState()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'SOME_RANDOM_STRING',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'SOME_RANDOM_STRING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_state
+     * @group issue1_type_and_value
+     * @dataProvider provideLogsWithInvalidValueState
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 612
+     */
+    public function test_VerifyLog_State_InvalidValue_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, 'state');
     }
 
     public function provideLogsWithInitReasonWithNotInitState()
