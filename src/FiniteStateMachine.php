@@ -479,6 +479,8 @@ class FiniteStateMachine
 
     protected function _verifyLogSymbol($stateSet, $log)
     {
+        $this->_verifyLogSymbolType($log);
+        $this->_verifyLogSymbolValue($stateSet, $log);
         $this->_verifyLogSymbolWithInitReason($stateSet, $log);
         $this->_verifyLogSymbolWithResetReason($stateSet, $log);
         $this->_verifyLogSymbolWithActionReason($stateSet, $log);
@@ -506,6 +508,15 @@ class FiniteStateMachine
                 if (!array_key_exists($symbol, $stateSet[$prevState]) || $stateSet[$prevState][$symbol]['state'] != $state) {
                     throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_SYMBOL_SEQUENCE);
                 }
+            }
+        }
+    }
+
+    protected function _verifyLogSymbolType($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array(gettype($logRecord['symbol']), array('string', 'NULL'))) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type symbol at index $logRecordIndex", 711);
             }
         }
     }
