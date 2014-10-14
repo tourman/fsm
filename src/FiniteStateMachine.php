@@ -314,7 +314,7 @@ class FiniteStateMachine
     {
         foreach ($log as $logRecordIndex => $logRecord) {
             if ($logRecordIndex && $logRecord['reason'] == 'init') {
-                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", 503);
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", 503);
             }
         }
     }
