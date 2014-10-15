@@ -253,4 +253,47 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
     {
         $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
+
+    public function provideLogsWithActionReasonWithEmptySymbol()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_symbol
+     * @dataProvider provideLogsWithActionReasonWithEmptySymbol
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 703
+     */
+    public function test_VerifyLog_ActionReasonWithEmptySymbol_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+    }
 }
