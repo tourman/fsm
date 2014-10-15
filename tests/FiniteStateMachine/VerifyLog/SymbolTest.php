@@ -11,7 +11,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_ActionReasonWithAbsentSymbol_ThrowsException
  * public function test_VerifyLog_ActionReasonWithMismatchSymbol_ThrowsException
  * public function test_VerifyLog_SleepReasonWithNotEmptySymbol_ThrowsException
- * public function test_VerifyLog_SleepReasonWithNotEmptySymbol_ThrowsException
+ * public function test_VerifyLog_WakeupReasonWithNotEmptySymbol_ThrowsException
  */
 class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 {
@@ -440,6 +440,43 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
      * @expectedExceptionCode 705
      */
     public function test_VerifyLog_ActionReasonWithMismatchSymbol_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+    }
+
+    public function provideLogsWithSleepReasonWithNotEmptySymbol()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => '*',
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_symbol
+     * @dataProvider provideLogsWithSleepReasonWithNotEmptySymbol
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 706
+     */
+    public function test_VerifyLog_SleepReasonWithNotEmptySymbol_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
