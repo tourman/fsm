@@ -480,4 +480,53 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
     {
         $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
+
+    public function provideLogsWithWakeupReasonWithNotEmptySymbol()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'wakeup',
+                        'symbol' => '*',
+                        'timestamp' => '1.000002',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 2,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_symbol
+     * @dataProvider provideLogsWithWakeupReasonWithNotEmptySymbol
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 707
+     */
+    public function test_VerifyLog_WakeupReasonWithNotEmptySymbol_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+    }
 }
