@@ -8,6 +8,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_InitReasonWithNotEmptySymbol_ThrowsException
  * public function test_VerifyLog_ResetReasonWithNotEmptySymbol_ThrowsException
  * public function test_VerifyLog_ActionReasonWithEmptySymbol_ThrowsException
+ * public function test_VerifyLog_ActionReasonWithAbsentSymbol_ThrowsException
  * public function test_VerifyLog_ActionReasonWithMismatchSymbol_ThrowsException
  * public function test_VerifyLog_SleepReasonWithNotEmptySymbol_ThrowsException
  * public function test_VerifyLog_SleepReasonWithNotEmptySymbol_ThrowsException
@@ -293,6 +294,79 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
      * @expectedExceptionCode 703
      */
     public function test_VerifyLog_ActionReasonWithEmptySymbol_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+    }
+
+    public function provideLogsWithActionReasonWithAbsentSymbol()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'failed',
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 2,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_symbol
+     * @dataProvider provideLogsWithActionReasonWithAbsentSymbol
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 704
+     */
+    public function test_VerifyLog_ActionReasonWithAbsentSymbol_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
