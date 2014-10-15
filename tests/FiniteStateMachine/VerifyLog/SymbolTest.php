@@ -296,4 +296,77 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
     {
         $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
+
+    public function provideLogsWithActionReasonWithMismatchSymbol()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => '*',
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'action',
+                        'symbol' => 'checkout',
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'action',
+                        'symbol' => 'failed',
+                        'timestamp' => '1.000001',
+                    ),
+                    array(
+                        'state' => 'PROCESSING',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000002',
+                    ),
+                ),
+                'logRecordIndex' => 2,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_symbol
+     * @dataProvider provideLogsWithActionReasonWithMismatchSymbol
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 705
+     */
+    public function test_VerifyLog_ActionReasonWithMismatchSymbol_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+    }
 }

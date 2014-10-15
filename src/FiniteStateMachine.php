@@ -569,6 +569,17 @@ class FiniteStateMachine
                 throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 703);
             }
         }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'action') {
+                continue;
+            }
+            $prevState = $log[ $logRecordIndex - 1 ]['state'];
+            $state = $logRecord['state'];
+            $symbol = $logRecord['symbol'];
+            if ($stateSet[$prevState][$symbol]['state'] != $state) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 705);
+            }
+        }
     }
 
     protected function _verifyLogTimestamp($stateSet, $log)
