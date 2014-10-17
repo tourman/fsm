@@ -212,21 +212,23 @@ fdAAAAAElFTkSuQmCC
         return $value;
     }
 
-    public function setLog($log)
+    public function setLog($log, FiniteStateMachine $fsm = null)
     {
-        $class = new ReflectionClass($this->_fsm);
+        $fsm = is_null($fsm) ? $this->_fsm : $fsm;
+        $class = new ReflectionClass($fsm);
         $property = $class->getProperty('_log');
         $property->setAccessible(true);
-        $property->setValue($this->_fsm, $log);
+        $property->setValue($fsm, $log);
         $property->setAccessible(false);
     }
 
-    public function getLog()
+    public function getLog(FiniteStateMachine $fsm = null)
     {
-        $class = new ReflectionClass($this->_fsm);
+        $fsm = is_null($fsm) ? $this->_fsm : $fsm;
+        $class = new ReflectionClass($fsm);
         $property = $class->getProperty('_log');
         $property->setAccessible(true);
-        $value = $property->getValue($this->_fsm);
+        $value = $property->getValue($fsm);
         $property->setAccessible(false);
         return $value;
     }

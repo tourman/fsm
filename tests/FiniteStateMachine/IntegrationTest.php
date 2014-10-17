@@ -7,7 +7,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_SetStatusSet_NotEmptyLog_SetsTheSameLog()
  * public function test_Sleep_Default_ProvidesValidStates
  * public function test_Sleep_Default_ProvidesValidReasons
- * public function test_Sleep_WakeUp_TheObjectsAreEqual
+ * public function test_Sleep_WakeUp_CompareFsmObjects
  * public function test_Cascade_VerifyLog_LogIsValidEveryStep()
  */
 class Fsm_IntegrationTest extends FsmTestCase
@@ -239,7 +239,7 @@ class Fsm_IntegrationTest extends FsmTestCase
     /**
      * @dataProvider provideSteps
      */
-    public function test_Sleep_WakeUp_TheTwoObjectsAreEqual($stateSet, $steps, $expectedStates, $expectedReasons)
+    public function test_Sleep_WakeUp_CompareFsmObjects($stateSet, $steps, $expectedStates, $expectedReasons)
     {
         $first = $this->_createFsm();
         $first->setStateSet($stateSet);
@@ -252,10 +252,12 @@ class Fsm_IntegrationTest extends FsmTestCase
         $log = $second->sleep();
         $third = $this->_createFsm();
         $third->setStateSet($stateSet, $log);
+        $third->sleep();
 
-        $first = $this->jsonEncode($first);
-        $second = $this->jsonEncode($second);
-        $third = $this->jsonEncode($third);
+        array_pop($log);
+        array_pop($log);
+        $this->setLog($log, $third);
+        $this->setLog($log, $second);
 
         $this->assertEquals($first, $second);
         $this->assertEquals($first, $third);
