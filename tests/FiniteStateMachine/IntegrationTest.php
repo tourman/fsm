@@ -53,35 +53,50 @@ class Fsm_IntegrationTest extends FsmTestCase
     public function provideNotEmptyLogs()
     {
         $stateSet = array_shift(array_shift($this->provideValidStateSets()));
-        $hash = md5(uniqid());
-        $stateSet['INIT'][$hash] = array(
-            'state' => 'INIT',
-        );
         $log = array(
             array(
                 'state' => 'INIT',
                 'reason' => 'init',
                 'symbol' => null,
-                'timestamp' => sprintf('%.6f', mktime(18, 0, 0, 5, 17, 2014) + rand(0, 999999) / 1000000),
+                'timestamp' => $this->generateTimestamp(),
             ),
             array(
                 'state' => 'INIT',
                 'reason' => 'action',
-                'symbol' => $hash,
-                'timestamp' => sprintf('%.6f', mktime(18, 0, 1, 5, 17, 2014) + rand(0, 999999) / 1000000),
+                'symbol' => '*',
+                'timestamp' => $this->generateTimestamp(),
             ),
             array(
                 'state' => 'CHECKOUT',
                 'reason' => 'action',
                 'symbol' => 'checkout',
-                'timestamp' => sprintf('%.6f', mktime(18, 0, 2, 5, 17, 2014) + rand(0, 999999) / 1000000),
+                'timestamp' => $this->generateTimestamp(),
+            ),
+            array(
+                'state' => 'CHECKOUT',
+                'reason' => 'sleep',
+                'symbol' => null,
+                'timestamp' => $this->generateTimestamp(),
             ),
         );
         return array(
             array(
                 'stateSet' => $stateSet,
                 'log' => $log,
-                'expectedLog' => $log,
+                'expectedLog' => array_merge($log, array(
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => $this->generateTimestamp(),
+                    ),
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => $this->generateTimestamp(),
+                    ),
+                )),
             ),
         );
     }
@@ -91,6 +106,12 @@ class Fsm_IntegrationTest extends FsmTestCase
      */
     public function test_SetStatusSet_NotEmptyLog_SetsTheSameLog($stateSet, $log, $expectedLog)
     {
+        $reversedLog = array_reverse($expectedLog);
+        $className = get_class($this->_fsm);
+        $this->_fsm = $this->getMockBuilder($className)->setMethods(array('getTimestamp'))->getMock();
+        $this->_fsm->expects($this->at(0))->method('getTimestamp')->with();
+        $this->_fsm->expects($this->at(1))->method('getTimestamp')->will($this->returnValue($reversedLog[1]['timestamp']));
+        $this->_fsm->expects($this->at(2))->method('getTimestamp')->will($this->returnValue($reversedLog[0]['timestamp']));
         $this->_fsm->setStateSet($stateSet, $log);
         $log = $this->_fsm->sleep();
         $this->assertSame($expectedLog, $log);

@@ -233,7 +233,6 @@ fdAAAAAElFTkSuQmCC
 
     public function generateTimestamp()
     {
-        $divider = rand(2, 0xffff);
-        return sprintf('%.6f', microtime(true) / $divider);
+        return sprintf('%.6f', microtime(true));
     }
 }

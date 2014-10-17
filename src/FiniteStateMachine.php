@@ -143,7 +143,7 @@ class FiniteStateMachine
             $lastLogRecord = array_pop($log);
             $this->_state = $lastLogRecord['state'];
             $this->_log[] = array(
-                'state' => null,
+                'state' => $this->_state,
                 'reason' => 'wakeup',
                 'symbol' => null,
                 'timestamp' => $this->getTimestamp(),
