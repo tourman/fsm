@@ -48,13 +48,13 @@ class Fsm_SetStateSetTest extends FsmTestCase
                     'state' => $state,
                     'reason' => md5(uniqid()),
                     'symbol' => md5(uniqid()),
-                    'timestamp' => sprintf('%.6f', mktime(0, 0, 0, 17, 4, 2014) + rand (1, 999999) / 1000000),
+                    'timestamp' => $this->generateTimestamp(),
                 ),
                 array(
                     'state' => $state,
                     'reason' => md5(uniqid()),
                     'symbol' => md5(uniqid()),
-                    'timestamp' => sprintf('%.6f', mktime(0, 0, 1, 17, 4, 2014) + rand (1, 999999) / 1000000),
+                    'timestamp' => $this->generateTimestamp(),
                 ),
             );
             $argumentSets[] = array(
@@ -62,10 +62,10 @@ class Fsm_SetStateSetTest extends FsmTestCase
                 'log' => $log,
                 'expectedLog' => array_merge($log, array(
                     array(
-                        'state' => null,
+                        'state' => $state,
                         'reason' => 'wakeup',
                         'symbol' => null,
-                        'timestamp' => sprintf('%.6f', mktime(0, 0, 1, 18, 4, 2014) + rand (1, 999999) / 1000000),
+                        'timestamp' => $this->generateTimestamp(),
                     )
                 )),
             );
