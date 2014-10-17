@@ -126,9 +126,11 @@ class Fsm_IntegrationTest extends FsmTestCase
                 'steps' => array(),
                 'expectedStates' => array(
                     'INIT',
+                    'INIT',
                 ),
                 'expectedReasons' => array(
                     'init',
+                    'sleep',
                 ),
             ),
             array(
@@ -169,6 +171,7 @@ class Fsm_IntegrationTest extends FsmTestCase
                     'PENDING',
                     'FAILED',
                     'FAILED',
+                    'FAILED',
                 ),
                 'expectedReasons' => array(
                     'init',
@@ -180,6 +183,7 @@ class Fsm_IntegrationTest extends FsmTestCase
                     'action',
                     'action',
                     'action',
+                    'sleep',
                 ),
             ),
         );
