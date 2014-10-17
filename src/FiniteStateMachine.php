@@ -620,6 +620,7 @@ class FiniteStateMachine
     {
         $this->_verifyLogTimestampType($log);
         $this->_verifyLogTimestampValue($log);
+        $this->_verifyLogTimestampSequence($log);
         return;
         foreach ($log as $logRecordIndex => $logRecord) {
             $timestamp = $logRecord['timestamp'];
@@ -649,6 +650,19 @@ class FiniteStateMachine
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!preg_match('/^(0|[1-9]\d*)\.\d{6}$/', $logRecord['timestamp'])) {
                 throw new InvalidArgumentException("Argument \$log has invalid value: invalid value timestamp at index $logRecordIndex", 812);
+            }
+        }
+    }
+
+    protected function _verifyLogTimestampSequence($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!$logRecordIndex) {
+                continue;
+            }
+            $prevTimestamp = $log[ $logRecordIndex - 1]['timestamp'];
+            if ($logRecord['timestamp'] < $prevTimestamp) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value timestamp in sequence at index $logRecordIndex", 813);
             }
         }
     }

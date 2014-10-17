@@ -237,6 +237,24 @@ class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
                 ),
                 'logRecordIndex' => 1,
             ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '-1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.1',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
         );
     }
 
@@ -251,5 +269,72 @@ class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
     public function test_VerifyLog_Timestamp_InvalidValue_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_testLogValue($stateSet, $log, $logRecordIndex, false);
+    }
+
+    public function provideLogsWithInvalidSequenceTimestamp()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '2.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000008',
+                    ),
+                ),
+                'logRecordIndex' => 3,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_timestamp
+     * @dataProvider provideLogsWithInvalidSequenceTimestamp
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 813
+     */
+    public function test_VerifyLog_Timestamp_InvalidSequence_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
     }
 }
