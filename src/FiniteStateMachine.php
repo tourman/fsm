@@ -111,7 +111,7 @@ class FiniteStateMachine
         }
         $this->_sleep = true;
         $this->_log[] = array(
-            'state' => null,
+            'state' => $this->_state,
             'reason' => 'sleep',
             'symbol' => null,
             'timestamp' => $this->getTimestamp(),

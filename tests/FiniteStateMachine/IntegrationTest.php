@@ -20,8 +20,14 @@ class Fsm_IntegrationTest extends FsmTestCase
                 'stateSet' => $stateSet,
                 'expectedLog' => array(
                     array(
-                        'state' => array_shift(array_keys($stateSet)),
+                        'state' => 'INIT',
                         'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => $this->generateTimestamp(),
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
                         'symbol' => null,
                         'timestamp' => $this->generateTimestamp(),
                     ),
@@ -37,7 +43,8 @@ class Fsm_IntegrationTest extends FsmTestCase
     {
         $className = get_class($this->_fsm);
         $this->_fsm = $this->getMockBuilder($className)->setMethods(array('getTimestamp'))->getMock();
-        $this->_fsm->expects($this->exactly(1))->method('getTimestamp')->will($this->returnValue($expectedLog[0]['timestamp']));
+        $this->_fsm->expects($this->at(0))->method('getTimestamp')->will($this->returnValue($expectedLog[0]['timestamp']));
+        $this->_fsm->expects($this->at(1))->method('getTimestamp')->will($this->returnValue($expectedLog[1]['timestamp']));
         $this->_fsm->setStateSet($stateSet);
         $log = $this->_fsm->sleep();
         $this->assertSame($expectedLog, $log);
