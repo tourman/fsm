@@ -619,6 +619,7 @@ class FiniteStateMachine
     protected function _verifyLogTimestamp($stateSet, $log)
     {
         $this->_verifyLogTimestampType($log);
+        $this->_verifyLogTimestampValue($log);
         return;
         foreach ($log as $logRecordIndex => $logRecord) {
             $timestamp = $logRecord['timestamp'];
@@ -639,6 +640,15 @@ class FiniteStateMachine
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_string($logRecord['timestamp'])) {
                 throw new InvalidArgumentException("Argument \$log has invalid type: invalid type timestamp at index $logRecordIndex", 811);
+            }
+        }
+    }
+
+    protected function _verifyLogTimestampValue($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!preg_match('/^(0|[1-9]\d*)\.\d{6}$/', $logRecord['timestamp'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value timestamp at index $logRecordIndex", 812);
             }
         }
     }

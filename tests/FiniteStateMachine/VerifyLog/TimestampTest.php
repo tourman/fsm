@@ -160,4 +160,96 @@ class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
     {
         $this->_testLogType($stateSet, $log, $logRecordIndex, false);
     }
+
+    public function provideLogsWithInvalidValueTimestamp()
+    {
+        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                ),
+                'logRecordIndex' => 0,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '01.000001',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'init',
+                        'symbol' => null,
+                        'timestamp' => '1.000009',
+                    ),
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.1',
+                    ),
+                ),
+                'logRecordIndex' => 1,
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_timestamp
+     * @group issue1_type_and_value
+     * @dataProvider provideLogsWithInvalidValueTimestamp
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionCode 812
+     */
+    public function test_VerifyLog_Timestamp_InvalidValue_ThrowsException($stateSet, $log, $logRecordIndex)
+    {
+        $this->_testLogValue($stateSet, $log, $logRecordIndex, false);
+    }
 }
