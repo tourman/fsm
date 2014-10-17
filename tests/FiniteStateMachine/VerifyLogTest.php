@@ -8,9 +8,6 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_InvalidStructureLog_ThrowsException()
  * public function test_VerifyLog_InvalidLengthLog_ThrowsException()
  * public function test_VerifyLog_LogWithInvalidKeys_ThrowsException()
- * public function test_VerifyLog_LogWithInvalidTypeTimestamp_ThrowsException()
- * public function test_VerifyLog_LogWithInvalidValueTimestamp_ThrowsException()
- * public function test_VerifyLog_LogWithInvalidTimestampSequence_ThrowsException()
  * public function test_VerifyLog_ValidArguments_ReturnsTrue()
  */
 class Fsm_VerifyLogTest extends FsmTestCase
@@ -231,118 +228,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
             $argumentSets[] = $argumentSet;
         }
         return $argumentSets;
-    }
-
-    public function providLogsWithInvalidTypeTimestamps()
-    {
-        $timestamps = array(
-            false,
-            1,
-            1.1,
-            array(),
-            new stdClass(),
-            null,
-        );
-        return $this->_provideLogsWithSpecificValues('timestamp', $timestamps);
-    }
-
-    /**
-     * @dataProvider providLogsWithInvalidTypeTimestamps
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionCode 141
-     */
-    public function test_VerifyLog_LogWithInvalidTypeTimestamp_ThrowsException($stateSet, $log, $logRecordIndex)
-    {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, 'timestamp');
-    }
-
-    public function providLogsWithInvalidValueTimestamps()
-    {
-        $timestamps = array(
-            '',
-            'invalidTimestamp',
-            '.1',
-            '0.1',
-            '1.1',
-            '1.12312',
-            '1.1231231',
-        );
-        return $this->_provideLogsWithSpecificValues('timestamp', $timestamps);
-    }
-
-    /**
-     * @dataProvider providLogsWithInvalidValueTimestamps
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionCode 142
-     */
-    public function test_VerifyLog_LogWithInvalidValueTimestamp_ThrowsException($stateSet, $log, $logRecordIndex)
-    {
-        $this->_testLogValue($stateSet, $log, $logRecordIndex, 'timestamp');
-    }
-
-    public function providLogsWithInvalidTimestampSequence()
-    {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
-        return array(
-            array(
-                'stateSet' => $stateSet,
-                'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '17000.000001',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'action',
-                        'symbol' => 'checkout',
-                        'timestamp' => '16999.000000',
-                    ),
-                    array(
-                        'state' => 'FAILED',
-                        'reason' => 'action',
-                        'symbol' => 'failed',
-                        'timestamp' => '17002.000001',
-                    ),
-                ),
-                'logRecordIndex' => 1,
-            ),
-            array(
-                'stateSet' => $stateSet,
-                'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '17000.000001',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'action',
-                        'symbol' => 'checkout',
-                        'timestamp' => '17000.000001',
-                    ),
-                    array(
-                        'state' => 'FAILED',
-                        'reason' => 'action',
-                        'symbol' => 'failed',
-                        'timestamp' => '17000.000000',
-                    ),
-                ),
-                'logRecordIndex' => 2,
-            ),
-        );
-    }
-
-    /**
-     * @dataProvider providLogsWithInvalidTimestampSequence
-     * @expectedException InvalidArgumentException
-     * @expectedExceptionCode 143
-     */
-    public function test_VerifyLog_LogWithInvalidTimestampSequence_ThrowsException($stateSet, $log, $logRecordIndex)
-    {
-        $this->_testLogSequence($stateSet, $log, $logRecordIndex, 'timestamp');
     }
 
     public function provideValidLogs()
