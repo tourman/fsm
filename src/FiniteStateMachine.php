@@ -677,6 +677,11 @@ class FiniteStateMachine
         if (!$length) {
             return true;
         }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!is_array($logRecord)) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type at index $logRecordIndex", 102);
+            }
+        }
         if ($length < 2) {
             throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length: $length", self::EXCEPTION_INVALID_LENGTH_LOG);
         }
