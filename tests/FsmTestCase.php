@@ -233,6 +233,17 @@ fdAAAAAElFTkSuQmCC
         return $value;
     }
 
+    public function getSleep(FiniteStateMachine $fsm = null)
+    {
+        $fsm = is_null($fsm) ? $this->_fsm : $fsm;
+        $class = new ReflectionClass($fsm);
+        $property = $class->getProperty('_sleep');
+        $property->setAccessible(true);
+        $value = $property->getValue($fsm);
+        $property->setAccessible(false);
+        return $value;
+    }
+
     public function generateTimestamp()
     {
         return sprintf('%.6f', microtime(true));

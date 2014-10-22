@@ -109,6 +109,7 @@ class FiniteStateMachine
         if ($this->isSleep()) {
             throw new Exception('Sleep mode', self::EXCEPTION_SLEEP);
         }
+        $this->_sleep = true;
         return;
         if ($this->_sleep) {
             throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);

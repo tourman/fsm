@@ -38,6 +38,20 @@ class Fsm_SleepTest extends FsmTestCase
         $this->_fsm->sleep();
     }
 
+    /**
+     * @group issue1
+     * @group issue1_sleep_protected
+     */
+    public function test_Sleep_SetsSleep()
+    {
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(false));
+        $sleepBefore = $this->getSleep();
+        $this->_fsm->sleep();
+        $sleepAfter = $this->getSleep();
+        $this->assertFalse($sleepBefore);
+        $this->assertTrue($sleepAfter);
+    }
+
     public function provideMethods()
     {
         return array(
