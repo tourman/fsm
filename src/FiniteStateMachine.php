@@ -119,6 +119,11 @@ class FiniteStateMachine
         return $this->_log;
     }
 
+    public function isSleep()
+    {
+        return $this->_sleep;
+    }
+
     public function reset()
     {
         if ($this->_sleep) {
