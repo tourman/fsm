@@ -11,6 +11,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_Sleep_CallsIsSleep()
  * public function test_Sleep_SetsSleep()
  * public function test_Sleep_AppendsSleepItemToLog()
+ * public function test_Sleep_ReturnsLog()
  **/
 class Fsm_SleepTest extends FsmTestCase
 {
@@ -173,6 +174,19 @@ class Fsm_SleepTest extends FsmTestCase
         $this->setLog($log);
         $this->_fsm->sleep();
         $log = $this->getLog();
+        $this->assertSame($expectedLog, $log);
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_sleep_protected
+     * @dataProvider provideSleepLogs
+     */
+    public function test_Sleep_ReturnsLog($state, $log, $expectedLog)
+    {
+        $this->setState($state);
+        $this->setLog($log);
+        $log = $this->_fsm->sleep();
         $this->assertSame($expectedLog, $log);
     }
 }

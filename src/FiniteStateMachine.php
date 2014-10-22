@@ -116,7 +116,7 @@ class FiniteStateMachine
             'symbol' => null,
             'timestamp' => $this->getTimestamp(),
         );
-        return;
+        return $this->_log;
         if ($this->_sleep) {
             throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
         }
