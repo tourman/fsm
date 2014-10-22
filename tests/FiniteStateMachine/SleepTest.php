@@ -19,8 +19,10 @@ class Fsm_SleepTest extends FsmTestCase
         parent::setUp();
         $methods = array(
             'isSleep',
+            'getTimestamp',
         );
         $this->_fsm = $this->getMockBuilder('TestFiniteStateMachine')->setMethods($methods)->getMock();
+        $this->_fsm->method('getTimestamp')->will($this->returnValue('1.000000'));
         $stateSet = array_shift(array_shift($this->provideValidStateSets()));
         $this->_fsm->setStateSet($stateSet);
     }
@@ -119,6 +121,58 @@ class Fsm_SleepTest extends FsmTestCase
         $this->_fsm->expects($this->once())->method('getTimestamp')->will($this->returnValue($expectedTimestamp));
         $this->setLog($log);
         $log = $this->_fsm->sleep();
+        $this->assertSame($expectedLog, $log);
+    }
+
+    public function provideSleepLogs()
+    {
+        $log = array(
+            array(
+                'state' => 'INIT',
+                'reason' => 'init',
+                'symbol' => null,
+                'timestamp' => '1.000000',
+            ),
+        );
+        return array(
+            array(
+                'state' => 'INIT',
+                'log' => $log,
+                'expectedLog' => array_merge($log, array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000000', //see setUp() method
+                    ),
+                )),
+            ),
+            array(
+                'state' => 'CHECKOUT',
+                'log' => array(),
+                'expectedLog' => array(
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000000', //see setUp() method
+                    ),
+                ),
+            ),
+        );
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_sleep_protected
+     * @dataProvider provideSleepLogs
+     */
+    public function test_Sleep_AppendsSleepItemToLog($state, $log, $expectedLog)
+    {
+        $this->setState($state);
+        $this->setLog($log);
+        $this->_fsm->sleep();
+        $log = $this->getLog();
         $this->assertSame($expectedLog, $log);
     }
 }

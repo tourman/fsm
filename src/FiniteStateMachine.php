@@ -110,6 +110,12 @@ class FiniteStateMachine
             throw new Exception('Sleep mode', self::EXCEPTION_SLEEP);
         }
         $this->_sleep = true;
+        $this->_log[] = array(
+            'state' => $this->_state,
+            'reason' => 'sleep',
+            'symbol' => null,
+            'timestamp' => $this->getTimestamp(),
+        );
         return;
         if ($this->_sleep) {
             throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
