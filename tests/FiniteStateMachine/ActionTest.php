@@ -5,7 +5,6 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 /**
  * public function test_Action_InvalidTypeArguments_ThrowsException()
  * public function test_Action_ValidArguments_CallsIsInitialized()
- * public function test_Action_IsInitializedReturnsFalse_ThrowsException()
  * public function test_Action_ValidArguments_CallsVerifySymbol()
  * public function test_Action_ValidArguments_CallsAppropriateMethodWithTheArguments()
  * public function test_Action_ValidArguments_SetsState()
@@ -113,21 +112,11 @@ class Fsm_ActionTest extends FsmTestCase
 
     /**
      * @dataProvider provideSymbols
-     */
-    public function test_Action_ValidArguments_CallsIsInitialized($symbol, $arguments)
-    {
-        $this->setMethods();
-        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
-        $this->_fsm->action($symbol, $arguments);
-    }
-
-    /**
-     * @dataProvider provideSymbols
      * @expectedException RuntimeException
      * @expectedExceptionCode 111
      * @expectedExceptionMessage States are not set
      */
-    public function test_Action_IsInitializedReturnsFalse_ThrowsException($symbol, $arguments)
+    public function test_Action_ValidArguments_CallsIsInitialized($symbol, $arguments)
     {
         $this->setMethods();
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(false));
