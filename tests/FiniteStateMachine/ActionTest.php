@@ -5,6 +5,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 /**
  * public function test_Action_InvalidTypeArguments_ThrowsException()
  * public function test_Action_ValidArguments_CallsIsInitialized()
+ * public function test_Action_ValidArguments_CallsIsSleep()
  * public function test_Action_ValidArguments_CallsVerifySymbol()
  * public function test_Action_ValidArguments_CallsAppropriateMethodWithTheArguments()
  * public function test_Action_ValidArguments_SetsState()
@@ -26,7 +27,12 @@ class Fsm_ActionTest extends FsmTestCase
     public function setMethods($methods = array())
     {
         $methods = array_merge(
-            array('isInitialized', 'verifySymbol', 'getTimestamp'),
+            array(
+                'isInitialized',
+                'isSleep',
+                'verifySymbol',
+                'getTimestamp',
+            ),
             $methods
         );
         $this->_fsm = $this->_fsm->setMethods($methods)->getMock();
@@ -124,12 +130,29 @@ class Fsm_ActionTest extends FsmTestCase
     }
 
     /**
+     * @group issue1
+     * @group issue1_sleep_protected
+     * @dataProvider provideSymbols
+     * @expectedException Exception
+     * @expectedExceptionCode 112
+     * @expectedExceptionMessage Sleep mode
+     */
+    public function test_Action_ValidArguments_CallsIsSleep($symbol, $arguments)
+    {
+        $this->setMethods();
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(true));
+        $this->_fsm->action($symbol, $arguments);
+    }
+
+    /**
      * @dataProvider provideSymbols
      */
     public function test_Action_ValidArguments_CallsVerifySymbol($symbol, $arguments)
     {
         $this->setMethods();
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $this->_fsm->expects($this->once())->method('verifySymbol')->with($this->identicalTo($symbol));
         $this->_fsm->action($symbol, $arguments);
     }
@@ -173,6 +196,7 @@ class Fsm_ActionTest extends FsmTestCase
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $expectation = $this->_fsm->expects($this->once())->method($method);
         $expectedArguments = array_map(array($this, 'identicalTo'), $arguments);
         call_user_func_array(array($expectation, 'with'), $expectedArguments);
@@ -188,6 +212,7 @@ class Fsm_ActionTest extends FsmTestCase
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $this->_fsm->action($symbol, $arguments);
         $state = $this->getState();
         $this->assertEquals($newState, $state);
@@ -203,6 +228,7 @@ class Fsm_ActionTest extends FsmTestCase
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('getTimestamp')->will($this->returnValue($expectedLogRecord['timestamp']));
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $this->_fsm->action($symbol, $arguments);
         $log = $this->getLog();
         $logRecord = array_pop($log);
@@ -218,6 +244,7 @@ class Fsm_ActionTest extends FsmTestCase
         $this->setStateSet($stateSet);
         $this->setState($expectedState);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $exceptionHash = md5(uniqid());
         $this->_fsm->expects($this->once())->method($method)->will($this->throwException(new RuntimeException($exceptionHash)));
         try {
@@ -242,6 +269,7 @@ class Fsm_ActionTest extends FsmTestCase
         //It should be checked for call time() any times because it should not be call actually
         $this->_fsm->expects($this->any())->method('getTimestamp')->will($this->returnValue($expectedLogRecord['timestamp']));
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $exceptionHash = md5(uniqid());
         $this->_fsm->expects($this->once())->method($method)->will($this->throwException(new RuntimeException($exceptionHash)));
         try {
@@ -265,6 +293,7 @@ class Fsm_ActionTest extends FsmTestCase
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $this->_fsm->expects($this->once())->method($method)->with();
         $this->_fsm->action($symbol);
     }
@@ -279,6 +308,7 @@ class Fsm_ActionTest extends FsmTestCase
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $this->_fsm->expects($this->once())->method($method)->will($this->returnValue($expectedResult));
         $result = $this->_fsm->action($symbol, $arguments);
         $this->assertSame($expectedResult, $result);
