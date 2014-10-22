@@ -7,13 +7,35 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_Sleep_After_MethodIsBlocked()
  * public function test_Sleep_Default_AppendsSleepItemToLog()()
  */
+/**
+ * public function test_Sleep_CallsIsSleep()
+ * public function test_Sleep_SetsSleep()
+ * public function test_Sleep_AppendsSleepItemToLog()
+ **/
 class Fsm_SleepTest extends FsmTestCase
 {
     public function setUp()
     {
         parent::setUp();
+        $methods = array(
+            'isSleep',
+        );
+        $this->_fsm = $this->getMockBuilder('TestFiniteStateMachine')->setMethods($methods)->getMock();
         $stateSet = array_shift(array_shift($this->provideValidStateSets()));
         $this->_fsm->setStateSet($stateSet);
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_sleep_protected
+     * @expectedException Exception
+     * @expectedExceptionMessage Sleep mode
+     * @expectedExceptionCode 112
+     */
+    public function test_Sleep_CallsIsSleep()
+    {
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(true));
+        $this->_fsm->sleep();
     }
 
     public function provideMethods()
