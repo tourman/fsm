@@ -3,7 +3,7 @@
 require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../FsmTestCase.php')));
 
 /**
- * public function test_Reset_IsInitializedReturnsFalse_ThrowsException()
+ * public function test_Reset_CallsIsInitialized()
  * public function test_Reset_ValidArguments_SetsState()
  * public function test_Reset_ValidArguments_PushesLog()
  */
@@ -18,10 +18,12 @@ class Fsm_ResetTest extends FsmTestCase
     }
 
     /**
+     * @group issue1
      * @expectedException RuntimeException
      * @expectedExceptionCode 111
+     * @expectedExceptionMessage States are not set
      */
-    public function test_Reset_IsInitializedReturnsFalse_ThrowsException()
+    public function test_Reset_CallsIsInitialized()
     {
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(false));
         $this->_fsm->reset();
