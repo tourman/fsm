@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 
 /**
  * public function test_SetStateSet_IsInitializedReturnsTrue_ThrowsException()
+ * public function test_SetStateSet_ValidArguments_UnsetsSleep()
  * public function test_SetStateSet_ValidArguments_CallsIsInitialized()
  * public function test_SetStateSet_ValidArguments_CallsIsVerifyLog()
  * public function test_SetStateSet_ValidArguments_SetsStateSet()
@@ -95,6 +96,19 @@ class Fsm_SetStateSetTest extends FsmTestCase
     {
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
         $this->_fsm->setStateSet($stateSet, $log);
+    }
+
+    /**
+     * @group issue1
+     * @group issue_sleep_protected
+     * @dataProvider provideValidArguments
+     */
+    public function test_SetStateSet_ValidArguments_UnsetsSleep($stateSet, $log)
+    {
+        $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(false));
+        $this->_fsm->setStateSet($stateSet, $log);
+        $sleep = $this->getSleep();
+        $this->assertFalse($sleep);
     }
 
     /**
