@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 
 /**
  * public function test_Reset_CallsIsInitialized()
+ * public function test_Reset_CallsIsSleep()
  * public function test_Reset_ValidArguments_SetsState()
  * public function test_Reset_ValidArguments_PushesLog()
  */
@@ -13,8 +14,11 @@ class Fsm_ResetTest extends FsmTestCase
     {
         $this->_fsm = $this->getMockBuilder(self::FSM_CLASS_NAME)->
             disableOriginalConstructor()->
-            setMethods(array('isInitialized', 'getTimestamp'))->
-            getMock();
+            setMethods(array(
+                'isInitialized',
+                'isSleep',
+                'getTimestamp',
+            ))->getMock();
     }
 
     /**
@@ -26,6 +30,19 @@ class Fsm_ResetTest extends FsmTestCase
     public function test_Reset_CallsIsInitialized()
     {
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(false));
+        $this->_fsm->reset();
+    }
+
+    /**
+     * @group issue1
+     * @expectedException RuntimeException
+     * @expectedExceptionCode 112
+     * @expectedExceptionMessage Sleep mode
+     */
+    public function test_Reset_CallsIsSleep()
+    {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(true));
         $this->_fsm->reset();
     }
 

@@ -126,11 +126,15 @@ class FiniteStateMachine
 
     public function reset()
     {
-        if ($this->_sleep) {
-            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
-        }
         if (!$this->isInitialized()) {
             throw new RuntimeException('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
+        if ($this->isSleep()) {
+            throw new RuntimeException('Sleep mode', 112);
+        }
+        return;
+        if ($this->_sleep) {
+            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
         }
         $this->_setState(array_shift(array_keys($this->_stateSet)), 'reset');
     }
