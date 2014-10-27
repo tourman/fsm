@@ -5,7 +5,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 /**
  * public function test_Reset_CallsIsInitialized()
  * public function test_Reset_CallsIsSleep()
- * public function test_Reset_ValidArguments_SetsState()
+ * public function test_Reset_SetsState()
  * public function test_Reset_ValidArguments_PushesLog()
  */
 class Fsm_ResetTest extends FsmTestCase
@@ -46,17 +46,52 @@ class Fsm_ResetTest extends FsmTestCase
         $this->_fsm->reset();
     }
 
+    public function provideValidStateSets()
+    {
+        return array(
+            array(
+                'stateSet' => array(
+                    'INIT' => array(
+                        '*' => array(
+                            'state' => 'INIT',
+                        ),
+                        'close' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                    'CLOSE' => array(),
+                ),
+                'expectedState' => 'INIT',
+            ),
+            array(
+                'stateSet' => array(
+                    'START' => array(
+                        '*' => array(
+                            'state' => 'START',
+                        ),
+                        'close' => array(
+                            'state' => 'CLOSE',
+                        ),
+                    ),
+                    'CLOSE' => array(),
+                ),
+                'expectedState' => 'START',
+            ),
+        );
+    }
+
     /**
+     * @group issue1
      * @dataProvider provideValidStateSets
      */
-    public function test_Reset_Default_SetsState($stateSet)
+    public function test_Reset_SetsState($stateSet, $expectedState)
     {
-        $states = array_keys($stateSet);
         $this->setStateSet($stateSet);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $this->_fsm->reset();
         $state = $this->getState();
-        $this->assertEquals($states[0], $state);
+        $this->assertEquals($expectedState, $state);
     }
 
     /**
