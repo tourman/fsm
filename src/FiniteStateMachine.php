@@ -106,8 +106,11 @@ class FiniteStateMachine
 
     public function sleep()
     {
-        if ($this->_sleep) {
-            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
+        if (!$this->isInitialized()) {
+            throw new Exception('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
+        if ($this->isSleep()) {
+            throw new Exception('Sleep mode', self::EXCEPTION_SLEEP);
         }
         $this->_sleep = true;
         $this->_log[] = array(
@@ -119,13 +122,18 @@ class FiniteStateMachine
         return $this->_log;
     }
 
+    public function isSleep()
+    {
+        return $this->_sleep;
+    }
+
     public function reset()
     {
-        if ($this->_sleep) {
-            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
-        }
         if (!$this->isInitialized()) {
             throw new RuntimeException('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
+        if ($this->isSleep()) {
+            throw new RuntimeException('Sleep mode', 112);
         }
         $this->_setState(array_shift(array_keys($this->_stateSet)), 'reset');
     }
@@ -167,14 +175,14 @@ class FiniteStateMachine
 
     public function action($symbol, $arguments = array())
     {
-        if ($this->_sleep) {
-            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
-        }
         if (!is_array($arguments)) {
             throw new InvalidArgumentException('Argument $arguments has invalid type', self::EXCEPTION_INVALID_TYPE);
         }
         if (!$this->isInitialized()) {
             throw new RuntimeException('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
+        if ($this->isSleep()) {
+            throw new RuntimeException('Sleep mode', self::EXCEPTION_SLEEP);
         }
         $this->verifySymbol($symbol);
         $result = null;

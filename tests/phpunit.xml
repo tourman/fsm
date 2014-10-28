@@ -14,6 +14,7 @@
         <testsuite name="FiniteStateMachine">
             <file>FiniteStateMachine/VerifyStateSetTest.php</file>
             <file>FiniteStateMachine/SleepTest.php</file>
+            <file>FiniteStateMachine/IsSleepTest.php</file>
             <file>FiniteStateMachine/ActionTest.php</file>
             <file>FiniteStateMachine/VerifySymbolTest.php</file>
             <file>FiniteStateMachine/VerifyLogTest.php</file>

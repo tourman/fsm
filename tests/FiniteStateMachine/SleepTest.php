@@ -3,84 +3,134 @@
 require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../FsmTestCase.php')));
 
 /**
- * public function test_Sleep_Before_MethodIsAllowed()
- * public function test_Sleep_After_MethodIsBlocked()
- * public function test_Sleep_Default_AppendsSleepItemToLog()()
- */
+ * public function test_Sleep_CallsIsInitialized()
+ * public function test_Sleep_CallsIsSleep()
+ * public function test_Sleep_SetsSleep()
+ * public function test_Sleep_AppendsSleepItemToLog()
+ * public function test_Sleep_ReturnsLog()
+ **/
 class Fsm_SleepTest extends FsmTestCase
 {
     public function setUp()
     {
         parent::setUp();
+        $methods = array(
+            'isInitialized',
+            'isSleep',
+            'getTimestamp',
+        );
+        $this->_fsm = $this->getMockBuilder('TestFiniteStateMachine')->setMethods($methods)->getMock();
+        $this->_fsm->method('getTimestamp')->will($this->returnValue('1.000000'));
         $stateSet = array_shift(array_shift($this->provideValidStateSets()));
         $this->_fsm->setStateSet($stateSet);
     }
 
-    public function provideMethods()
+    /**
+     * @group issue1
+     * @group issue1_is_initialized
+     * @expectedException Exception
+     * @expectedExceptionMessage States are not set
+     * @expectedExceptionCode 111
+     */
+    public function test_Sleep_CallsIsInitialized()
     {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(false));
+        $this->_fsm->sleep();
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_sleep_protected
+     * @expectedException Exception
+     * @expectedExceptionMessage Sleep mode
+     * @expectedExceptionCode 112
+     */
+    public function test_Sleep_CallsIsSleep()
+    {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(true));
+        $this->_fsm->sleep();
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_sleep_protected
+     */
+    public function test_Sleep_SetsSleep()
+    {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(false));
+        $sleepBefore = $this->getSleep();
+        $this->_fsm->sleep();
+        $sleepAfter = $this->getSleep();
+        $this->assertFalse($sleepBefore);
+        $this->assertTrue($sleepAfter);
+    }
+
+    public function provideSleepLogs()
+    {
+        $log = array(
+            array(
+                'state' => 'INIT',
+                'reason' => 'init',
+                'symbol' => null,
+                'timestamp' => '1.000000',
+            ),
+        );
         return array(
             array(
-                'method' => 'action',
-                'arguments' => array('checkout'),
+                'state' => 'INIT',
+                'log' => $log,
+                'expectedLog' => array_merge($log, array(
+                    array(
+                        'state' => 'INIT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000000', //see setUp() method
+                    ),
+                )),
             ),
             array(
-                'method' => 'reset',
-                'arguments' => array(),
-            ),
-            array(
-                'method' => 'sleep',
-                'arguments' => array(),
+                'state' => 'CHECKOUT',
+                'log' => array(),
+                'expectedLog' => array(
+                    array(
+                        'state' => 'CHECKOUT',
+                        'reason' => 'sleep',
+                        'symbol' => null,
+                        'timestamp' => '1.000000', //see setUp() method
+                    ),
+                ),
             ),
         );
     }
 
     /**
      * @group issue1
-     * @group issue1_log_sleep
-     * @dataProvider provideMethods
-     * @expectedException Exception
-     * @expectedExceptionMessage 47fcddc8193f1bed347ae752d8b30bbe
+     * @group issue1_sleep_protected
+     * @dataProvider provideSleepLogs
      */
-    public function test_Sleep_Before_MethodIsAllowed($method, $arguments)
+    public function test_Sleep_AppendsSleepItemToLog($state, $log, $expectedLog)
     {
-        call_user_func_array(array($this->_fsm, $method), $arguments);
-        throw new Exception('47fcddc8193f1bed347ae752d8b30bbe');
-    }
-
-    /**
-     * @group issue1
-     * @group issue1_log_sleep
-     * @dataProvider provideMethods
-     * @expectedException RuntimeException
-     * @expectedExceptionCode 112
-     * @expectedExceptionMessage Could not call method over the sleep mode
-     */
-    public function test_Sleep_After_MethodIsBlocked($method, $arguments)
-    {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(false));
+        $this->setState($state);
+        $this->setLog($log);
         $this->_fsm->sleep();
-        call_user_func_array(array($this->_fsm, $method), $arguments);
+        $log = $this->getLog();
+        $this->assertSame($expectedLog, $log);
     }
 
     /**
      * @group issue1
-     * @group issue1_log_sleep
+     * @group issue1_sleep_protected
+     * @dataProvider provideSleepLogs
      */
-    public function test_Sleep_Default_AppendsSleepItemToLog()
+    public function test_Sleep_ReturnsLog($state, $log, $expectedLog)
     {
-        $expectedTimestamp = md5(uniqid());
-        $expectedLog = array(
-            md5(uniqid()),
-            array(
-                'state' => null,
-                'reason' => 'sleep',
-                'symbol' => null,
-                'timestamp' => $expectedTimestamp,
-            ),
-        );
-        $log = array_slice($expectedLog, 0, -1);
-        $className = get_class($this->_fsm);
-        $this->_fsm = $this->getMockBuilder($className)->setMethods(array('getTimestamp'))->getMock();
-        $this->_fsm->expects($this->once())->method('getTimestamp')->will($this->returnValue($expectedTimestamp));
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(false));
+        $this->setState($state);
         $this->setLog($log);
         $log = $this->_fsm->sleep();
         $this->assertSame($expectedLog, $log);
