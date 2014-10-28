@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 
 /**
  * public function test_SetStateSet_IsInitializedReturnsTrue_ThrowsException()
+ * public function test_SetStateSet_ValidArguments_UnsetsSleep()
  * public function test_SetStateSet_ValidArguments_CallsIsInitialized()
  * public function test_SetStateSet_ValidArguments_CallsIsVerifyLog()
  * public function test_SetStateSet_ValidArguments_SetsStateSet()
@@ -48,19 +49,26 @@ class Fsm_SetStateSetTest extends FsmTestCase
                     'state' => $state,
                     'reason' => md5(uniqid()),
                     'symbol' => md5(uniqid()),
-                    'timestamp' => sprintf('%.6f', mktime(0, 0, 0, 17, 4, 2014) + rand (1, 999999) / 1000000),
+                    'timestamp' => $this->generateTimestamp(),
                 ),
                 array(
                     'state' => $state,
                     'reason' => md5(uniqid()),
                     'symbol' => md5(uniqid()),
-                    'timestamp' => sprintf('%.6f', mktime(0, 0, 1, 17, 4, 2014) + rand (1, 999999) / 1000000),
+                    'timestamp' => $this->generateTimestamp(),
                 ),
             );
             $argumentSets[] = array(
                 'stateSet' => $stateSet,
                 'log' => $log,
-                'expectedLog' => $log,
+                'expectedLog' => array_merge($log, array(
+                    array(
+                        'state' => $state,
+                        'reason' => 'wakeup',
+                        'symbol' => null,
+                        'timestamp' => $this->generateTimestamp(),
+                    )
+                )),
             );
             $argumentSets[] = array(
                 'stateSet' => $stateSet,
@@ -88,6 +96,19 @@ class Fsm_SetStateSetTest extends FsmTestCase
     {
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
         $this->_fsm->setStateSet($stateSet, $log);
+    }
+
+    /**
+     * @group issue1
+     * @group issue_sleep_protected
+     * @dataProvider provideValidArguments
+     */
+    public function test_SetStateSet_ValidArguments_UnsetsSleep($stateSet, $log)
+    {
+        $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(false));
+        $this->_fsm->setStateSet($stateSet, $log);
+        $sleep = $this->getSleep();
+        $this->assertFalse($sleep);
     }
 
     /**
@@ -133,14 +154,15 @@ class Fsm_SetStateSetTest extends FsmTestCase
     }
 
     /**
+     * @group issue1
      * @dataProvider provideValidArguments
      */
     public function test_SetStateSet_ValidArguments_SetsLog($stateSet, $log, $expectedLog)
     {
-        $expectedLogRecord = $expectedLog[0];
+        $expectedLogRecord = array_shift(array_slice($expectedLog, -1));
         $className = get_class($this->_fsm);
         $this->_fsm = $this->getMockBuilder($className)->setMethods(array('getTimestamp'))->getMock();
-        $this->_fsm->expects($this->once())->method('getTimestamp')->will($this->returnValue($expectedLogRecord['timestamp']));
+        $this->_fsm->expects($this->any())->method('getTimestamp')->will($this->returnValue($expectedLogRecord['timestamp']));
         $this->_fsm->setStateSet($stateSet, $log);
         $log = $this->getLog();
         $this->assertSame($expectedLog, $log);

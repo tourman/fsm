@@ -8,6 +8,7 @@ class FiniteStateMachine
 
     const EXCEPTION_STATES_ARE_SET = 110;
     const EXCEPTION_STATES_ARE_NOT_SET = 111;
+    const EXCEPTION_SLEEP = 112;
 
     const EXCEPTION_STATE_SET_IS_EMPTY = 202;
     const EXCEPTION_STATE_SET_WITH_INVALID_TYPE_STATE = 203;
@@ -32,6 +33,8 @@ class FiniteStateMachine
     const EXCEPTION_SYMBOL_IS_OUT_OF_ALPHABET = 132;
     const EXCEPTION_SYMBOL_IS_OUT_OF_STATE = 133;
 
+    const EXCEPTION_INVALID_LENGTH_LOG = 301;
+
     const EXCEPTION_LOG_WITH_INVALID_TYPE_STATE = 111;
     const EXCEPTION_LOG_WITH_INVALID_VALUE_STATE = 112;
     const EXCEPTION_LOG_WITH_INVALID_STATE_SEQUENCE = 113;
@@ -51,6 +54,7 @@ class FiniteStateMachine
     protected $_stateSet;
     protected $_state;
     protected $_log = array();
+    protected $_sleep = false;
 
     public function verifyStateSet($stateSet)
     {
@@ -154,13 +158,34 @@ class FiniteStateMachine
 
     public function sleep()
     {
+        if (!$this->isInitialized()) {
+            throw new Exception('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
+        if ($this->isSleep()) {
+            throw new Exception('Sleep mode', self::EXCEPTION_SLEEP);
+        }
+        $this->_sleep = true;
+        $this->_log[] = array(
+            'state' => $this->_state,
+            'reason' => 'sleep',
+            'symbol' => null,
+            'timestamp' => $this->getTimestamp(),
+        );
         return $this->_log;
+    }
+
+    public function isSleep()
+    {
+        return $this->_sleep;
     }
 
     public function reset()
     {
         if (!$this->isInitialized()) {
             throw new RuntimeException('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
+        if ($this->isSleep()) {
+            throw new RuntimeException('Sleep mode', 112);
         }
         $this->_setState(array_shift(array_keys($this->_stateSet)), 'reset');
     }
@@ -177,6 +202,12 @@ class FiniteStateMachine
             $this->_log = $log;
             $lastLogRecord = array_pop($log);
             $this->_state = $lastLogRecord['state'];
+            $this->_log[] = array(
+                'state' => $this->_state,
+                'reason' => 'wakeup',
+                'symbol' => null,
+                'timestamp' => $this->getTimestamp(),
+            );
         } else {
             $this->_setState(array_shift(array_keys($stateSet)), 'init');
         }
@@ -201,6 +232,9 @@ class FiniteStateMachine
         }
         if (!$this->isInitialized()) {
             throw new RuntimeException('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
+        if ($this->isSleep()) {
+            throw new RuntimeException('Sleep mode', self::EXCEPTION_SLEEP);
         }
         $this->verifySymbol($symbol);
         $result = null;
@@ -262,14 +296,37 @@ class FiniteStateMachine
 
     protected function _verifyLogReason($stateSet, $log)
     {
+        $this->_verifyLogReasonType($log);
+        $this->_verifyLogReasonValue($log);
+        $this->_verifyLogReasonFirstPosition($log);
+        $this->_verifyLogReasonLastPosition($log);
+        $this->_verifyInitReason($log);
+        $this->_verifyPositionAfterSleep($log);
+        return;
+        $reasons = array();
+        foreach ($log as $logRecord) {
+            $reasons[] = $logRecord['reason'];
+        }
+        $this->_verifyLogInitReasonPosition($reasons);
+        return;
         foreach ($log as $logRecordIndex => $logRecord) {
             $reason = $logRecord['reason'];
             if (!is_string($reason)) {
                 throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_TYPE_REASON);
             }
-            if (!in_array($reason, array('init', 'action', 'reset'))) {
+            if (!in_array($reason, array('init', 'action', 'reset', 'sleep', 'wakeup'))) {
                 throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", self::EXCEPTION_LOG_WITH_INVALID_VALUE_REASON);
             }
+        }
+        if ($log[0]['reason'] != 'init') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index 0, required values: (init)", 124);
+        }
+        $lastLogRecordIndex = sizeof($log) - 1;
+        if ($log[$lastLogRecordIndex]['reason'] != 'sleep') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $lastLogRecordIndex, required values: (sleep)", 125);
+        }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            $reason = $logRecord['reason'];
             $firstLogRecord = !(bool)$logRecordIndex;
             $initReason = $reason == 'init';
             if ($firstLogRecord xor $initReason) {
@@ -278,8 +335,90 @@ class FiniteStateMachine
         }
     }
 
+    protected function _verifyLogReasonType(array $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array(gettype($logRecord['reason']), array('string', 'NULL'))) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type reason at index $logRecordIndex", 511);
+            }
+        }
+    }
+
+    protected function _verifyLogReasonValue(array $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array($logRecord['reason'], array('init', 'reset', 'action', 'wakeup', 'sleep'))) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason at index $logRecordIndex", 512);
+            }
+        }
+    }
+
+    protected function _verifyLogReasonFirstPosition(array $log)
+    {
+        $logRecord = array_shift($log);
+        if ($logRecord['reason'] != 'init') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index 0", 501);
+        }
+    }
+
+    protected function _verifyLogReasonLastPosition(array $log)
+    {
+        $logRecordIndex = sizeof($log) - 1;
+        $logRecord = array_pop($log);
+        if ($logRecord['reason'] != 'sleep') {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex", 502);
+        }
+    }
+
+    protected function _verifyInitReason(array $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecordIndex && $logRecord['reason'] == 'init') {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex", 503);
+            }
+        }
+    }
+
+    protected function _verifyPositionAfterSleep(array $log)
+    {
+        $lastLogRecordIndex = sizeof($log) - 1;
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!$logRecordIndex) {
+                continue;
+            }
+            if ($log[ $logRecordIndex - 1 ]['reason'] == 'sleep' && $logRecord['reason'] != 'wakeup') {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $logRecordIndex", 504);
+            }
+        }
+    }
+
+    protected function _verifyLogInitReasonPosition(array $reasons)
+    {
+        $numReasons = sizeof($reasons);
+        foreach ($reasons as $reasonIndex => $reason) {
+            if (!$reasonIndex) {
+                continue;
+            }
+            if ($reason == 'init') {
+                if ($reasonIndex < $numReasons - 1) {
+                    throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $reasonIndex", 501);
+                } else {
+                    throw new InvalidArgumentException("Argument \$log has invalid value: invalid value reason in sequence at index $reasonIndex", 502);
+                }
+            }
+        }
+    }
+
     protected function _verifyLogState($stateSet, $log)
     {
+        $this->_verifyLogStateType($log);
+        $this->_verifyLogStateValue($stateSet, $log);
+        $this->_verifyLogStateWithInitReason($stateSet, $log);
+        $this->_verifyLogStateWithResetReason($stateSet, $log);
+        $this->_verifyLogStateWithActionReason($stateSet, $log);
+        $this->_verifyLogStateWithSleepReason($stateSet, $log);
+        $this->_verifyLogStateWithWakeupReason($stateSet, $log);
+        return;
         $states = $this->_getStates($stateSet);
         $allowedTransitions = $this->_getAllowedTransitions($stateSet);
         foreach ($log as $logRecordIndex => $logRecord) {
@@ -310,8 +449,104 @@ class FiniteStateMachine
         }
     }
 
+    protected function _verifyLogStateType($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!is_string($logRecord['state'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type state at index $logRecordIndex", 611);
+            }
+        }
+    }
+
+    protected function _verifyLogStateValue($stateSet, $log)
+    {
+        $states = array_keys($stateSet);
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array($logRecord['state'], $states)) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state at index $logRecordIndex", 612);
+            }
+        }
+    }
+
+    protected function _verifyLogStateWithInitReason($stateSet, $log)
+    {
+        $initState = array_shift(array_keys($stateSet));
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'init') {
+                continue;
+            }
+            if ($logRecord['state'] != $initState) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", 601);
+            }
+        }
+    }
+
+    protected function _verifyLogStateWithResetReason($stateSet, $log)
+    {
+        $initState = array_shift(array_keys($stateSet));
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'reset') {
+                continue;
+            }
+            if ($logRecord['state'] != $initState) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", 602);
+            }
+        }
+    }
+
+    protected function _verifyLogStateWithActionReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'action') {
+                continue;
+            }
+            $prevState = $log[ $logRecordIndex - 1 ]['state'];
+            $states = array();
+            foreach ($stateSet[$prevState] as $symbol => $destination) {
+                $states[] = $destination['state'];
+            }
+            if (!in_array($logRecord['state'], $states)) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", 603);
+            }
+        }
+    }
+
+    protected function _verifyLogStateWithSleepReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'sleep') {
+                continue;
+            }
+            $prevState = $log[ $logRecordIndex - 1 ]['state'];
+            if ($prevState != $logRecord['state']) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", 604);
+            }
+        }
+    }
+
+    protected function _verifyLogStateWithWakeupReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'wakeup') {
+                continue;
+            }
+            $prevState = $log[ $logRecordIndex - 1 ]['state'];
+            if ($prevState != $logRecord['state']) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value state in sequence at index $logRecordIndex", 605);
+            }
+        }
+    }
+
     protected function _verifyLogSymbol($stateSet, $log)
     {
+        $this->_verifyLogSymbolType($log);
+        $this->_verifyLogSymbolValue($stateSet, $log);
+        $this->_verifyLogSymbolWithInitReason($stateSet, $log);
+        $this->_verifyLogSymbolWithResetReason($stateSet, $log);
+        $this->_verifyLogSymbolWithActionReason($stateSet, $log);
+        $this->_verifyLogSymbolWithSleepReason($stateSet, $log);
+        $this->_verifyLogSymbolWithWakeupReason($stateSet, $log);
+        return;
         $alphabet = $this->_getAlphabet($stateSet);
         foreach ($log as $logRecordIndex => $logRecord) {
             $symbol = $logRecord['symbol'];
@@ -337,8 +572,116 @@ class FiniteStateMachine
         }
     }
 
+    protected function _verifyLogSymbolType($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array(gettype($logRecord['symbol']), array('string', 'NULL'))) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type symbol at index $logRecordIndex", 711);
+            }
+        }
+    }
+
+    protected function _verifyLogSymbolValue($stateSet, $log)
+    {
+        $symbols = array(null);
+        foreach ($stateSet as $state => $symbolSet) {
+            $symbols = array_merge($symbols, array_keys($symbolSet));
+        }
+        $symbols = array_unique($symbols);
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!in_array($logRecord['symbol'], $symbols)) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol at index $logRecordIndex", 712);
+            }
+        }
+    }
+
+    protected function _verifyLogSymbolWithInitReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'init') {
+                continue;
+            }
+            if (!is_null($logRecord['symbol'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 701);
+            }
+        }
+    }
+
+    protected function _verifyLogSymbolWithResetReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'reset') {
+                continue;
+            }
+            if (!is_null($logRecord['symbol'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 702);
+            }
+        }
+    }
+
+    protected function _verifyLogSymbolWithActionReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'action') {
+                continue;
+            }
+            if (!is_string($logRecord['symbol'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 703);
+            }
+        }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'action') {
+                continue;
+            }
+            $prevState = $log[ $logRecordIndex - 1 ]['state'];
+            $symbol = $logRecord['symbol'];
+            if (empty($stateSet[$prevState][$symbol])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 704);
+            }
+        }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'action') {
+                continue;
+            }
+            $prevState = $log[ $logRecordIndex - 1 ]['state'];
+            $state = $logRecord['state'];
+            $symbol = $logRecord['symbol'];
+            if ($stateSet[$prevState][$symbol]['state'] != $state) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 705);
+            }
+        }
+    }
+
+    protected function _verifyLogSymbolWithSleepReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'sleep') {
+                continue;
+            }
+            if (!is_null($logRecord['symbol'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 706);
+            }
+        }
+    }
+
+    protected function _verifyLogSymbolWithWakeupReason($stateSet, $log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if ($logRecord['reason'] != 'wakeup') {
+                continue;
+            }
+            if (!is_null($logRecord['symbol'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value symbol in sequence at index $logRecordIndex", 707);
+            }
+        }
+    }
+
     protected function _verifyLogTimestamp($stateSet, $log)
     {
+        $this->_verifyLogTimestampType($log);
+        $this->_verifyLogTimestampValue($log);
+        $this->_verifyLogTimestampSequence($log);
+        return;
         foreach ($log as $logRecordIndex => $logRecord) {
             $timestamp = $logRecord['timestamp'];
             if (!is_string($timestamp)) {
@@ -353,11 +696,54 @@ class FiniteStateMachine
         }
     }
 
+    protected function _verifyLogTimestampType($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!is_string($logRecord['timestamp'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type timestamp at index $logRecordIndex", 811);
+            }
+        }
+    }
+
+    protected function _verifyLogTimestampValue($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!preg_match('/^(0|[1-9]\d*)\.\d{6}$/', $logRecord['timestamp'])) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value timestamp at index $logRecordIndex", 812);
+            }
+        }
+    }
+
+    protected function _verifyLogTimestampSequence($log)
+    {
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!$logRecordIndex) {
+                continue;
+            }
+            $prevTimestamp = $log[ $logRecordIndex - 1]['timestamp'];
+            if ($logRecord['timestamp'] < $prevTimestamp) {
+                throw new InvalidArgumentException("Argument \$log has invalid value: invalid value timestamp in sequence at index $logRecordIndex", 813);
+            }
+        }
+    }
+
     public function verifyLog($stateSet, $log)
     {
         $this->verifyStateSet($stateSet);
         if (!is_array($log)) {
             throw new InvalidArgumentException('Argument $log has invalid type', self::EXCEPTION_INVALID_TYPE);
+        }
+        $length = sizeof($log);
+        if (!$length) {
+            return true;
+        }
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!is_array($logRecord)) {
+                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type at index $logRecordIndex", 102);
+            }
+        }
+        if ($length < 2) {
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length: $length", self::EXCEPTION_INVALID_LENGTH_LOG);
         }
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_array($logRecord)) {
