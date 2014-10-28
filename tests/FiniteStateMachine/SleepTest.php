@@ -47,6 +47,7 @@ class Fsm_SleepTest extends FsmTestCase
      */
     public function test_Sleep_CallsIsSleep()
     {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
         $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(true));
         $this->_fsm->sleep();
     }
@@ -57,6 +58,7 @@ class Fsm_SleepTest extends FsmTestCase
      */
     public function test_Sleep_SetsSleep()
     {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
         $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(false));
         $sleepBefore = $this->getSleep();
         $this->_fsm->sleep();
@@ -110,6 +112,8 @@ class Fsm_SleepTest extends FsmTestCase
      */
     public function test_Sleep_AppendsSleepItemToLog($state, $log, $expectedLog)
     {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(false));
         $this->setState($state);
         $this->setLog($log);
         $this->_fsm->sleep();
@@ -124,6 +128,8 @@ class Fsm_SleepTest extends FsmTestCase
      */
     public function test_Sleep_ReturnsLog($state, $log, $expectedLog)
     {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
+        $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(false));
         $this->setState($state);
         $this->setLog($log);
         $log = $this->_fsm->sleep();
