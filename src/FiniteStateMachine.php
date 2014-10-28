@@ -133,11 +133,6 @@ class FiniteStateMachine
             throw new RuntimeException('Sleep mode', 112);
         }
         $this->_setState(array_shift(array_keys($this->_stateSet)), 'reset');
-        return;
-        if ($this->_sleep) {
-            throw new RuntimeException('Could not call method over the sleep mode', self::EXCEPTION_SLEEP);
-        }
-        $this->_setState(array_shift(array_keys($this->_stateSet)), 'reset');
     }
 
     public function setStateSet($stateSet, $log = array())
