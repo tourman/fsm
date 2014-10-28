@@ -106,6 +106,9 @@ class FiniteStateMachine
 
     public function sleep()
     {
+        if (!$this->isInitialized()) {
+            throw new Exception('States are not set', self::EXCEPTION_STATES_ARE_NOT_SET);
+        }
         if ($this->isSleep()) {
             throw new Exception('Sleep mode', self::EXCEPTION_SLEEP);
         }

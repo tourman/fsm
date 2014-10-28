@@ -3,6 +3,7 @@
 require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../FsmTestCase.php')));
 
 /**
+ * public function test_Sleep_CallsIsInitialized()
  * public function test_Sleep_CallsIsSleep()
  * public function test_Sleep_SetsSleep()
  * public function test_Sleep_AppendsSleepItemToLog()
@@ -14,6 +15,7 @@ class Fsm_SleepTest extends FsmTestCase
     {
         parent::setUp();
         $methods = array(
+            'isInitialized',
             'isSleep',
             'getTimestamp',
         );
@@ -21,6 +23,19 @@ class Fsm_SleepTest extends FsmTestCase
         $this->_fsm->method('getTimestamp')->will($this->returnValue('1.000000'));
         $stateSet = array_shift(array_shift($this->provideValidStateSets()));
         $this->_fsm->setStateSet($stateSet);
+    }
+
+    /**
+     * @group issue1
+     * @group issue1_is_initialized
+     * @expectedException Exception
+     * @expectedExceptionMessage States are not set
+     * @expectedExceptionCode 111
+     */
+    public function test_Sleep_CallsIsInitialized()
+    {
+        $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(false));
+        $this->_fsm->sleep();
     }
 
     /**
