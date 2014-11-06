@@ -168,18 +168,6 @@ data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAFAAQMAAAC4JmMQAAAABlBMVEXw+f
         return $argumentSets;
     }
 
-    public function assertInvalidTypeArgumentExceptionMessage(InvalidArgumentException $e, $argumentName)
-    {
-        $messageRegExp = preg_quote("Argument \$$argumentName has invalid type", '/');
-        $this->assertRegExp("/^$messageRegExp/", $e->getMessage());
-    }
-
-    public function assertInvalidValueArgumentExceptionMessage(InvalidArgumentException $e, $argumentName)
-    {
-        $messageRegExp = preg_quote("Argument \$$argumentName has invalid value", '/');
-        $this->assertRegExp("/^$messageRegExp/", $e->getMessage());
-    }
-
     public function setStateSet($stateSet)
     {
         $class = new ReflectionClass($this->_fsm);
