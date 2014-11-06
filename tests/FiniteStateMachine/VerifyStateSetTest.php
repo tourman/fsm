@@ -657,19 +657,16 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithDestinationHasNoState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 208
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination has no state for state \S+ and symbol \S+$/
      */
     public function test_VerifyStateSet_DestinationHasNoState_ThrowsException($stateSet, $state, $symbol)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("destination has no state for state $state and symbol $symbol", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
     }
 
     public function provideStateSetsWithDestinationRefersToAbsentState()
