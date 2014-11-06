@@ -17,6 +17,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException_CertainState
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException_CertainSymbol
  * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
+ * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException_CertainState
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
  * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException
@@ -667,6 +668,17 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
     public function test_VerifyStateSet_DestinationHasNoState_ThrowsException($stateSet, $state, $symbol)
     {
         $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    /**
+     * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetsWithDestinationHasNoState
+     */
+    public function test_VerifyStateSet_DestinationHasNoState_ThrowsException_CertainState($stateSet, $state, $symbol)
+    {
+        $this->assertExceptionState($stateSet, $state);
     }
 
     public function provideStateSetsWithDestinationRefersToAbsentState()
