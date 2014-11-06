@@ -33,7 +33,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
             $exceptionMessage = $e->getMessage();
         }
         $stateRegExp = preg_quote($state, '/');
-        $this->assertRegExp("/state $stateRegExp$/", $exceptionMessage);
+        $this->assertRegExp("/state $stateRegExp/", $exceptionMessage);
     }
 
     public function assertExceptionSymbol($stateSet, $symbol)
@@ -45,7 +45,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
             $exceptionMessage = $e->getMessage();
         }
         $symbolRegExp = preg_quote($symbol, '/');
-        $this->assertRegExp("/symbol $symbolRegExp$/", $exceptionMessage);
+        $this->assertRegExp("/symbol $symbolRegExp/", $exceptionMessage);
     }
 
     public function provideInvalidTypeStateSets()
@@ -580,19 +580,16 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithInvalidTypeDestination
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 207
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type destination for state \S+ and symbol \S+/
      */
     public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException($stateSet, $state, $symbol)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("invalid type destination for state $state and symbol $symbol", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
     }
 
     public function provideStateSetsWithDestinationHasNoState()
