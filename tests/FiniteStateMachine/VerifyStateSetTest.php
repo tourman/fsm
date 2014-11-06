@@ -22,6 +22,30 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  */
 class Fsm_VerifyStateSetTest extends FsmTestCase
 {
+    public function assertExceptionState($stateSet, $state)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+            $exceptionMessage = '';
+        } catch (Exception $e) {
+            $exceptionMessage = $e->getMessage();
+        }
+        $stateRegExp = preg_quote($state, '/');
+        $this->assertRegExp("/state $stateRegExp$/", $exceptionMessage);
+    }
+
+    public function assertExceptionSymbol($stateSet, $symbol)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+            $exceptionMessage = '';
+        } catch (Exception $e) {
+            $exceptionMessage = $e->getMessage();
+        }
+        $symbolRegExp = preg_quote($symbol, '/');
+        $this->assertRegExp("/symbol $symbolRegExp$/", $exceptionMessage);
+    }
+
     public function provideInvalidTypeStateSets()
     {
         return array(
