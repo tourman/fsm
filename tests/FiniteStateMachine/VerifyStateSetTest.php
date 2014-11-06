@@ -11,6 +11,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_FirstStateIsEmpty_ThrowsException
  * public function test_VerifyStateSet_NonFirstStateIsEmpty_DoesNotThrowException
  * public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException
+ * public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException_CertainState
  * public function test_VerifyStateSet_StateHasNoDefaultSymbol_DoesNotThrowException
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException
  * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
@@ -357,6 +358,16 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
     public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException($stateSet, $state)
     {
         $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    /**
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetWithInvalidTypeSymbol
+     */
+    public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException_CertainState($stateSet, $state)
+    {
+        $this->assertExceptionState($stateSet, $state);
     }
 
     public function provideStateSetsWithoutDefaultSymbol()
