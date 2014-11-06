@@ -14,7 +14,7 @@ class Fsm_IntegrationTest extends FsmTestCase
 {
     public function provideEmptyLogs()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -52,7 +52,7 @@ class Fsm_IntegrationTest extends FsmTestCase
 
     public function provideNotEmptyLogs()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         $log = array(
             array(
                 'state' => 'INIT',
@@ -119,7 +119,7 @@ class Fsm_IntegrationTest extends FsmTestCase
 
     public function provideSteps()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,

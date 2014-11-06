@@ -86,7 +86,7 @@ class Fsm_ActionTest extends FsmTestCase
 
     public function provideValidArguments()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,

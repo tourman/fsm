@@ -35,7 +35,7 @@ class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInvalidTypeTimestamp()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -163,7 +163,7 @@ class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInvalidValueTimestamp()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -273,7 +273,7 @@ class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInvalidSequenceTimestamp()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,

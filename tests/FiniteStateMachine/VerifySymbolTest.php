@@ -119,7 +119,7 @@ class Fsm_VerifySymbolTest extends FsmTestCase
 
     public function provideOutOfStateSymbols()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,

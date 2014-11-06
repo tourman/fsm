@@ -19,7 +19,7 @@ class FsmTestCase extends PHPUnit_Framework_TestCase
         return new TestFiniteStateMachine();
     }
 
-    public function provideValidStateSets()
+    protected function _getBillingStateSet()
     {
         /*
 data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAFAAQMAAAC4JmMQAAAABlBMVEXw+f
@@ -110,9 +110,14 @@ fdAAAAAElFTkSuQmCC
                 ),
             ),
         );
+        return $stateSet;
+    }
+
+    public function provideValidStateSets()
+    {
         return array(
             array(
-                'stateSet' => $stateSet,
+                'stateSet' => $this->_getBillingStateSet(),
             ),
         );
     }
@@ -120,7 +125,7 @@ fdAAAAAElFTkSuQmCC
     public function provideValidStates()
     {
         $argumentSets = array();
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         $states = array_keys($stateSet);
         foreach ($states as $state) {
             $argumentSets[] = array(

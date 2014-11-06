@@ -38,7 +38,7 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInvalidTypeReason()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -130,7 +130,7 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInvalidValueReason()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -168,7 +168,7 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithNotInitFirstPosition()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStates()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -287,7 +287,7 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithNotSleepLastPosition()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStates()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -406,7 +406,7 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInitNotAtFirstPosition()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStates()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -515,7 +515,7 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithNotWakepAfterSleep()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStates()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,

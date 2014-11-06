@@ -22,7 +22,7 @@ class Fsm_VerifyLogTest extends FsmTestCase
 
     public function test_VerifyLog_Default_CallsVerifyStateSet()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         //Add unique value for the identifying
         $stateSet['INIT'][md5(uniqid())] = $stateSet['INIT']['*'];
         $this->_fsm->expects($this->once())->method('verifyStateSet')->with($this->identicalTo($stateSet));
@@ -89,7 +89,7 @@ class Fsm_VerifyLogTest extends FsmTestCase
 
     public function provideInvalidTypeLogs()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -130,7 +130,7 @@ class Fsm_VerifyLogTest extends FsmTestCase
 
     public function provideInvalidStructureLogs()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -172,7 +172,7 @@ class Fsm_VerifyLogTest extends FsmTestCase
 
     public function provideInvalidLengthLogs()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -283,7 +283,7 @@ class Fsm_VerifyLogTest extends FsmTestCase
 
     public function provideValidLogs()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,

@@ -41,7 +41,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInitInvalidTypeSymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -133,7 +133,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInitInvalidValueSymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -177,7 +177,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInitReasonWithNotEmptySymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -214,7 +214,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithResetReasonWithNotEmptySymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -257,7 +257,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithActionReasonWithEmptySymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -300,7 +300,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithActionReasonWithAbsentSymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -373,7 +373,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithActionReasonWithMismatchSymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -446,7 +446,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithSleepReasonWithNotEmptySymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -483,7 +483,7 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithWakeupReasonWithNotEmptySymbol()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,

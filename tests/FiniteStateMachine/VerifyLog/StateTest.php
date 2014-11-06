@@ -39,7 +39,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInvalidTypeState()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -149,7 +149,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInvalidValueState()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -205,7 +205,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithInitReasonWithNotInitState()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -242,7 +242,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithResetReasonWithNotInitState()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -291,7 +291,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithActionReasonWithMismatchState()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -376,7 +376,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithSleepReasonWithStateFromNoPreviousRecord()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
@@ -473,7 +473,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 
     public function provideLogsWithWakeupReasonWithStateFromNoPreviousRecord()
     {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         return array(
             array(
                 'stateSet' => $stateSet,
