@@ -15,6 +15,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_StateHasNoDefaultSymbol_DoesNotThrowException
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException_CertainState
+ * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException_CertainSymbol
  * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
  * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
@@ -598,6 +599,23 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
         }
         $stateRegExp = preg_quote($state, '/');
         $this->assertRegExp("/for state $stateRegExp/", $exceptionMessage);
+    }
+
+    /**
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetsWithInvalidTypeDestination
+     */
+    public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException_CertainSymbol($stateSet, $state, $symbol)
+    {
+        try {
+            $this->_fsm->verifyStateSet($stateSet);
+            $exceptionMessage = '';
+        } catch (Exception $e) {
+            $exceptionMessage = $e->getMessage();
+        }
+        $symbolRegExp = preg_quote($symbol, '/');
+        $this->assertRegExp("/and symbol $symbolRegExp\$/", $exceptionMessage);
     }
 
     public function provideStateSetsWithDestinationHasNoState()
