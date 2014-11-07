@@ -111,19 +111,16 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithInvalidTypeState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 203
+     * @expectedExceptionMessage Argument $stateSet has invalid value: invalid type state
      */
     public function test_VerifyStateSet_InvalidTypeState_ThrowsException($stateSet)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith('invalid type state', $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
     }
 
     public function provideStateSetsWithInvalidTypeSymbolSet()
