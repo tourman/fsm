@@ -243,19 +243,16 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithEmptyFirstState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 205
+     * @expectedExceptionMessage Argument $stateSet has invalid value: first state is empty
      */
     public function test_VerifyStateSet_FirstStateIsEmpty_ThrowsException($stateSet)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("first state is empty", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
     }
 
     public function provideStateSetsWithEmptyNonFirstState()
