@@ -20,6 +20,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
+ * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException
  * public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException
@@ -965,19 +966,27 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithDestinationHasInvalidTypeAction
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 210
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination has invalid type action for state \S+ and symbol \S+$/
      */
     public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException($stateSet, $state, $symbol)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("destination has invalid type action for state $state and symbol $symbol", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    /**
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetsWithDestinationHasInvalidTypeAction
+     */
+    public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException_CertainKeys($stateSet, $state, $symbol)
+    {
+        $this->assertExceptionMessage($stateSet, 'state', $state);
+        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
     }
 
     public function provideStateSetsWithDestinationRefersToAbsentMethod()
