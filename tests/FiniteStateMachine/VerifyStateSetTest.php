@@ -16,6 +16,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
+ * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException
  * public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException
@@ -645,19 +646,27 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithDestinationHasNoState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 208
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination has no state for state \S+ and symbol \S+$/
      */
     public function test_VerifyStateSet_DestinationHasNoState_ThrowsException($stateSet, $state, $symbol)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("destination has no state for state $state and symbol $symbol", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    /**
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetsWithDestinationHasNoState
+     */
+    public function test_VerifyStateSet_DestinationHasNoState_ThrowsException_CertainKeys($stateSet, $state, $symbol)
+    {
+        $this->assertExceptionMessage($stateSet, 'state', $state);
+        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
     }
 
     public function provideStateSetsWithDestinationRefersToAbsentState()
