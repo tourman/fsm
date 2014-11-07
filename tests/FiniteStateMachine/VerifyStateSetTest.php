@@ -11,6 +11,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_FirstStateIsEmpty_ThrowsException
  * public function test_VerifyStateSet_NonFirstStateIsEmpty_DoesNotThrowException
  * public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException
+ * public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_StateHasNoDefaultSymbol_DoesNotThrowException
  * public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException
  * public function test_VerifyStateSet_DestinationHasNoState_ThrowsException
@@ -345,19 +346,26 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetWithInvalidTypeSymbol
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 206
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type symbol for state \S+$/
      */
     public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException($stateSet, $state)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("invalid type symbol for state $state", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    /**
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetWithInvalidTypeSymbol
+     */
+    public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException_CertainKeys($stateSet, $state)
+    {
+        $this->assertExceptionMessage($stateSet, 'state', $state);
     }
 
     public function provideStateSetsWithoutDefaultSymbol()
