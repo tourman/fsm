@@ -24,6 +24,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException
+ * public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException
  * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
  */
@@ -1102,19 +1103,28 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithDestinationRefersToNonPublicMethod
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 212
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination refers to non-public method \S+ for state \S+ and symbol \S+$/
      */
     public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException($stateSet, $state, $symbol, $method)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("destination refers to non-public method $method for state $state and symbol $symbol", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    /**
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetsWithDestinationRefersToNonPublicMethod
+     */
+    public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException_CertainKeys($stateSet, $state, $symbol, $method)
+    {
+        $this->assertExceptionMessage($stateSet, 'state', $state);
+        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
+        $this->assertExceptionMessage($stateSet, 'method', $method);
     }
 
     public function provideStateSetsWithStateWithNoReferenceTo()
