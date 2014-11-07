@@ -26,6 +26,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException
  * public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException
+ * public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException_CertainKeys
  * public function test_VerifyStateSet_ValidArguments_ReturnsTrue
  */
 class Fsm_VerifyStateSetTest extends FsmTestCase
@@ -1190,19 +1191,26 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
 
     /**
      * @group issue2
+     * @group issue22
+     * @group issue22_exception_message
      * @dataProvider provideStateSetsWithStateWithNoReferenceTo
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 213
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: there is a state \S+ with no reference to$/
      */
     public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException($stateSet, $state)
     {
-        try {
-            $this->_fsm->verifyStateSet($stateSet);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'stateSet');
-            $this->assertStringEndsWith("there is a state $state with no reference to", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyStateSet($stateSet);
+    }
+
+    /**
+     * @group issue22
+     * @group issue22_exception_message
+     * @dataProvider provideStateSetsWithStateWithNoReferenceTo
+     */
+    public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException_CertainKeys($stateSet, $state)
+    {
+        $this->assertExceptionMessage($stateSet, 'state', $state);
     }
 
     public function provideInvalidTypeArguments()
