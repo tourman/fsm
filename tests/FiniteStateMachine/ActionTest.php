@@ -80,18 +80,6 @@ class Fsm_ActionTest extends FsmTestCase
         $this->_fsm->action($symbol, $arguments);
     }
 
-    public function provideValidArguments()
-    {
-        $stateSet = $this->_getBillingStateSet();
-        return array(
-            array(
-                'stateSet' => $stateSet,
-                'symbol' => '*',
-                'arguments' => array(),
-            ),
-        );
-    }
-
     protected function _getArguments()
     {
         $arguments = array();
