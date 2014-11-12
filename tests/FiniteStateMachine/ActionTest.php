@@ -72,16 +72,12 @@ class Fsm_ActionTest extends FsmTestCase
      * @dataProvider provideInvalidTypeArguments
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 101
+     * @expectedExceptionMessage Argument $arguments has invalid type
      */
     public function test_Action_InvalidTypeArguments_ThrowsException($symbol, $arguments)
     {
         $this->setMethods();
-        try {
-            $this->_fsm->action($symbol, $arguments);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidTypeArgumentExceptionMessage($e, 'arguments');
-            throw $e;
-        }
+        $this->_fsm->action($symbol, $arguments);
     }
 
     public function provideValidArguments()
