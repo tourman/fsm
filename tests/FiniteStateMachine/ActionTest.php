@@ -80,27 +80,27 @@ class Fsm_ActionTest extends FsmTestCase
         $this->_fsm->action($symbol, $arguments);
     }
 
-    protected function _getArguments()
-    {
-        $arguments = array();
-        $numArguments = rand(0, 3);
-        for ($i = 0; $i < $numArguments; $i++) {
-            $arguments[] = md5(uniqid());
-        }
-        return $arguments;
-    }
-
     public function provideSymbols()
     {
         return array(
             array(
-                'symbol' => md5(uniqid()),
-                'arguments' => $this->_getArguments(),
+                'symbol' => '5b16c1a61ca98f261e353cc368a8b64f',
+                'arguments' => array(
+                    '3f7d0ac4b1c7ab0a833377b93c4bb0ee',
+                ),
+            ),
+            array(
+                'symbol' => '42fb9bf30fd36ffe0710d7635b685c78',
+                'arguments' => array(
+                    '4a8060ad67b332f5bacc9e44ca39f251',
+                    '91a7dd0a0e2597f3a1f85833de9ba416',
+                ),
             ),
         );
     }
 
     /**
+     * @group issue22_symbols
      * @dataProvider provideSymbols
      * @expectedException RuntimeException
      * @expectedExceptionCode 111
@@ -116,6 +116,7 @@ class Fsm_ActionTest extends FsmTestCase
     /**
      * @group issue1
      * @group issue1_sleep_protected
+     * @group issue22_symbols
      * @dataProvider provideSymbols
      * @expectedException Exception
      * @expectedExceptionCode 112
@@ -130,6 +131,7 @@ class Fsm_ActionTest extends FsmTestCase
     }
 
     /**
+     * @group issue22_symbols
      * @dataProvider provideSymbols
      */
     public function test_Action_ValidArguments_CallsVerifySymbol($symbol, $arguments)
@@ -143,32 +145,57 @@ class Fsm_ActionTest extends FsmTestCase
 
     public function provideMethods()
     {
-        $argumentSets = array();
-        $stateSets = array_map('array_shift', $this->provideValidStateSets());
-        foreach ($stateSets as $stateSet) {
-            foreach ($stateSet as $state => $symbolSet) {
-                foreach ($symbolSet as $symbol => $destination) {
-                    if (!isset($destination['action'])) {
-                        continue;
-                    }
-                    $argumentSets[] = array(
-                        'stateSet' => $stateSet,
-                        'state' => $state,
-                        'symbol' => $symbol,
-                        'arguments' => $this->_getArguments(),
-                        'method' => $destination['action'],
-                        'newState' => $destination['state'],
-                        'logRecord' => array(
-                            'state' => $destination['state'],
-                            'reason' => 'action',
-                            'symbol' => $symbol,
-                            'timestamp' => $this->generateTimestamp(),
-                        ),
-                    );
-                }
-            }
-        }
-        return $argumentSets;
+        $stateSet = $this->_getBillingStateSet();
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'state' =>'INIT',
+                'symbol' => 'checkout',
+                'arguments' => array(
+                    '91a7dd0a0e2597f3a1f85833de9ba416',
+                ),
+                'method' => 'checkout',
+                'newState' => 'CHECKOUT',
+                'expectedLogRecord' => array(
+                    'state' => 'CHECKOUT',
+                    'reason' => 'action',
+                    'symbol' => 'checkout',
+                    'timestamp' => $this->generateTimestamp(),
+                ),
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'state' =>'PROCESSING',
+                'symbol' => 'pending',
+                'arguments' => array(
+                    '91a7dd0a0e2597f3a1f85833de9ba426',
+                ),
+                'method' => 'pend',
+                'newState' => 'PENDING',
+                'expectedLogRecord' => array(
+                    'state' => 'PENDING',
+                    'reason' => 'action',
+                    'symbol' => 'pending',
+                    'timestamp' => $this->generateTimestamp(),
+                ),
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'state' =>'PENDING',
+                'symbol' => 'void',
+                'arguments' => array(
+                    '91a7dd0a0e2597f3a1f85833de9ba436',
+                ),
+                'method' => 'void',
+                'newState' => 'VOID',
+                'expectedLogRecord' => array(
+                    'state' => 'VOID',
+                    'reason' => 'action',
+                    'symbol' => 'void',
+                    'timestamp' => $this->generateTimestamp(),
+                ),
+            ),
+        );
     }
 
     /**
