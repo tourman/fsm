@@ -110,18 +110,8 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'someRandomString',
-                        'symbol' => null,
-                        'timestamp' => '1.999887',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.999887',
-                    ),
+                    array('state' => 'INIT', 'reason' => 'someRandomString', 'symbol' => null, 'timestamp' => '1.999887'),
+                    array('state' => 'INIT', 'reason' => 'sleep',            'symbol' => null, 'timestamp' => '1.999887'),
                 ),
                 'logRecordIndex' => 0,
             ),
