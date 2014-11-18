@@ -738,7 +738,7 @@ class FiniteStateMachine
         }
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_array($logRecord)) {
-                throw new InvalidArgumentException("Argument \$log has invalid type: invalid type at index $logRecordIndex", 102);
+                throw new InvalidArgumentException("Argument \$log has invalid type at index $logRecordIndex", 102);
             }
         }
         if ($length < 2) {

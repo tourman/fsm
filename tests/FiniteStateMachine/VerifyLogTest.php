@@ -7,6 +7,8 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_InvalidTypeLog_ThrowsException()
  * public function test_VerifyLog_InvalidLengthLog_ThrowsException()
  * public function test_VerifyLog_InvalidLengthLog_ThrowsException_CertainKeys()
+ * public function test_VerifyLog_InvalidStructureLog_ThrowsException()
+ * public function test_VerifyLog_InvalidStructureLog_ThrowsException_CertainKeys()
  * public function test_VerifyLog_LogWithInvalidKeys_ThrowsException()
  * public function test_VerifyLog_ValidArguments_ReturnsTrue()
  */
@@ -44,23 +46,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
         $stateSet['INIT'][md5(uniqid())] = $stateSet['INIT']['*'];
         $this->_fsm->expects($this->once())->method('verifyStateSet')->with($this->identicalTo($stateSet));
         $this->_fsm->verifyLog($stateSet, array());
-    }
-
-    protected function _testLogType($stateSet, $log, $logRecordIndex = null, $variable = null)
-    {
-        try {
-            $this->_fsm->verifyLog($stateSet, $log);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidTypeArgumentExceptionMessage($e, 'log');
-            if (!is_null($logRecordIndex)) {
-                if (is_null($variable)) {
-                    $this->assertStringEndsWith("invalid type at index $logRecordIndex", $e->getMessage());
-                } else {
-                    $this->assertStringEndsWith("invalid type $variable at index $logRecordIndex", $e->getMessage());
-                }
-            }
-            throw $e;
-        }
     }
 
     protected function _testLogValue($stateSet, $log, $logRecordIndex = null, $variable = null)
@@ -136,13 +121,15 @@ class Fsm_VerifyLogTest extends FsmTestCase
     }
 
     /**
+     * @group issue22
      * @dataProvider provideInvalidTypeLogs
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 101
+     * @expectedExceptionMessage Argument $log has invalid type
      */
     public function test_VerifyLog_InvalidTypeLog_ThrowsException($stateSet, $log)
     {
-        $this->_testLogType($stateSet, $log);
+        $this->_fsm->verifyLog($stateSet, $log);
     }
 
     public function provideInvalidStructureLogs()
@@ -231,13 +218,24 @@ class Fsm_VerifyLogTest extends FsmTestCase
     }
 
     /**
+     * @group issue22
      * @dataProvider provideInvalidStructureLogs
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 102
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid type at index \d+$/
      */
     public function test_VerifyLog_InvalidStructureLog_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex);
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideInvalidStructureLogs
+     */
+    public function test_VerifyLog_InvalidStructureLog_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
     public function providLogsWithInvalidKeys()
