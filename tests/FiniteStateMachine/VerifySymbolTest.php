@@ -8,6 +8,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifySymbol_SymbolIsOutOfAlphabet_ThrowsException()
  * public function test_VerifySymbol_SymbolIsOutOfAlphabet_ThrowsException_CertainKeys()
  * public function test_VerifySymbol_SymbolIsOutOfState_ThrowsException()
+ * public function test_VerifySymbol_SymbolIsOutOfState_ThrowsException_CertainKeys()
  * public function test_VerifySymbol_ValidSymbol_ReturnsTrue()
  */
 class Fsm_VerifySymbolTest extends FsmTestCase
@@ -163,22 +164,31 @@ class Fsm_VerifySymbolTest extends FsmTestCase
     }
 
     /**
+     * @group issue22
      * @dataProvider provideOutOfStateSymbols
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 133
+     * @expectedExceptionMessageRegExp /^Argument \$symbol has invalid value: symbol "[^"]*" is out of the state "[^"]*"$/
      */
     public function test_VerifySymbol_SymbolIsOutOfState_ThrowsException($stateSet, $state, $symbol)
     {
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
-        try {
-            $this->_fsm->verifySymbol($symbol);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'symbol');
-            $this->assertStringEndsWith("symbol \"$symbol\" is out of the state \"$state\"", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifySymbol($symbol);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideOutOfStateSymbols
+     */
+    public function test_VerifySymbol_SymbolIsOutOfState_ThrowsException_CertainKeys($stateSet, $state, $symbol)
+    {
+        $this->setStateSet($stateSet);
+        $this->setState($state);
+        $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->assertExceptionMessage($symbol, 'symbol', "\"$symbol\"");
+        $this->assertExceptionMessage($symbol, 'state', "\"$state\"");
     }
 
     public function provideValidSymbols()
