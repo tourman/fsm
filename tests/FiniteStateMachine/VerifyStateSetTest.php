@@ -193,7 +193,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithInvalidTypeSymbolSet
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 204
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type symbol set for state \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type symbol set for state "[^"]*"$/
      */
     public function test_VerifyStateSet_InvalidTypeSymbolSet_ThrowsException($stateSet, $state)
     {
@@ -207,7 +207,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_InvalidTypeSymbolSet_ThrowsException_CertainKeys($stateSet, $state)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
     }
 
     public function provideStateSetsWithEmptyFirstState()
@@ -358,7 +358,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetWithInvalidTypeSymbol
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 206
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type symbol for state \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type symbol for state "[^"]*"$/
      */
     public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException($stateSet, $state)
     {
@@ -372,7 +372,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_InvalidTypeSymbol_ThrowsException_CertainKeys($stateSet, $state)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
     }
 
     public function provideStateSetsWithoutDefaultSymbol()
@@ -590,7 +590,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithInvalidTypeDestination
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 207
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type destination for state \S+ and symbol \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: invalid type destination for state "[^"]*" and symbol "[^"]*"$/
      */
     public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException($stateSet, $state, $symbol)
     {
@@ -604,8 +604,8 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_InvalidTypeDestination_ThrowsException_CertainKeys($stateSet, $state, $symbol)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
-        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
+        $this->assertExceptionMessage($stateSet, 'symbol', "\"$symbol\"");
     }
 
     public function provideStateSetsWithDestinationHasNoState()
@@ -656,7 +656,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithDestinationHasNoState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 208
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination has no state for state \S+ and symbol \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination has no state for state "[^"]*" and symbol "[^"]*"$/
      */
     public function test_VerifyStateSet_DestinationHasNoState_ThrowsException($stateSet, $state, $symbol)
     {
@@ -670,8 +670,8 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_DestinationHasNoState_ThrowsException_CertainKeys($stateSet, $state, $symbol)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
-        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
+        $this->assertExceptionMessage($stateSet, 'symbol', "\"$symbol\"");
     }
 
     public function provideStateSetsWithDestinationRefersToAbsentState()
@@ -724,7 +724,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithDestinationRefersToAbsentState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 209
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination refers to absent state \S+ for state \S+ and symbol \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination refers to absent state "[^"]*" for state "[^"]*" and symbol "[^"]*"$/
      */
     public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException($stateSet, $state, $symbol, $absentState)
     {
@@ -738,9 +738,9 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_DestinationRefersToAbsentState_ThrowsException_CertainKeys($stateSet, $state, $symbol, $absentState)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
-        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
-        $this->assertExceptionMessage($stateSet, 'absent state', $absentState);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
+        $this->assertExceptionMessage($stateSet, 'symbol', "\"$symbol\"");
+        $this->assertExceptionMessage($stateSet, 'absent state', "\"$absentState\"");
     }
 
     public function provideStateSetsWithDestinationHasInvalidTypeAction()
@@ -974,7 +974,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithDestinationHasInvalidTypeAction
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 210
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination has invalid type action for state \S+ and symbol \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination has invalid type action for state "[^"]*" and symbol "[^"]*"$/
      */
     public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException($stateSet, $state, $symbol)
     {
@@ -988,8 +988,8 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_DestinationHasInvalidTypeAction_ThrowsException_CertainKeys($stateSet, $state, $symbol)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
-        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
+        $this->assertExceptionMessage($stateSet, 'symbol', "\"$symbol\"");
     }
 
     public function provideStateSetsWithDestinationRefersToAbsentMethod()
@@ -1041,7 +1041,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithDestinationRefersToAbsentMethod
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 211
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination refers to absent method \S+ for state \S+ and symbol \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination refers to absent method "[^"]*" for state "[^"]*" and symbol "[^"]*"$/
      */
     public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException($stateSet, $state, $symbol, $absentMethod)
     {
@@ -1055,9 +1055,9 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_DestinationRefersToAbsentMethod_ThrowsException_CertainKeys($stateSet, $state, $symbol, $absentMethod)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
-        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
-        $this->assertExceptionMessage($stateSet, 'absent method', $absentMethod);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
+        $this->assertExceptionMessage($stateSet, 'symbol', "\"$symbol\"");
+        $this->assertExceptionMessage($stateSet, 'absent method', "\"$absentMethod\"");
     }
 
     public function provideStateSetsWithDestinationRefersToNonPublicMethod()
@@ -1109,7 +1109,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithDestinationRefersToNonPublicMethod
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 212
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination refers to non-public method \S+ for state \S+ and symbol \S+$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: destination refers to non-public method "[^"]*" for state "[^"]*" and symbol "[^"]*"$/
      */
     public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException($stateSet, $state, $symbol, $method)
     {
@@ -1123,9 +1123,9 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_DestinationRefersToNonPublicMethod_ThrowsException_CertainKeys($stateSet, $state, $symbol, $method)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
-        $this->assertExceptionMessage($stateSet, 'symbol', $symbol);
-        $this->assertExceptionMessage($stateSet, 'method', $method);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
+        $this->assertExceptionMessage($stateSet, 'symbol', "\"$symbol\"");
+        $this->assertExceptionMessage($stateSet, 'method', "\"$method\"");
     }
 
     public function provideStateSetsWithStateWithNoReferenceTo()
@@ -1196,7 +1196,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      * @dataProvider provideStateSetsWithStateWithNoReferenceTo
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 213
-     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: there is a state \S+ with no reference to$/
+     * @expectedExceptionMessageRegExp /^Argument \$stateSet has invalid value: there is a state "[^"]*" with no reference to$/
      */
     public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException($stateSet, $state)
     {
@@ -1210,7 +1210,7 @@ class Fsm_VerifyStateSetTest extends FsmTestCase
      */
     public function test_VerifyStateSet_StateWithNoReferenceTo_ThrowsException_CertainKeys($stateSet, $state)
     {
-        $this->assertExceptionMessage($stateSet, 'state', $state);
+        $this->assertExceptionMessage($stateSet, 'state', "\"$state\"");
     }
 
     public function provideInvalidTypeArguments()

@@ -71,7 +71,7 @@ class FiniteStateMachine
         }
         foreach ($stateSet as $state => $symbolSet) {
             if (!is_array($symbolSet)) {
-                throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type symbol set for state $state", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL_SET);
+                throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type symbol set for state \"$state\"", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL_SET);
             }
         }
         $states = array_keys($stateSet);
@@ -81,35 +81,35 @@ class FiniteStateMachine
         foreach ($stateSet as $state => $symbolSet) {
             foreach ($symbolSet as $symbol => $destination) {
                 if (!is_string($symbol)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type symbol for state $state", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL);
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type symbol for state \"$state\"", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_SYMBOL);
                 }
             }
         }
         foreach ($stateSet as $state => $symbolSet) {
             foreach ($symbolSet as $symbol => $destination) {
                 if (!is_array($destination)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type destination for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_DESTINATION);
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: invalid type destination for state \"$state\" and symbol \"$symbol\"", self::EXCEPTION_STATE_SET_WITH_INVALID_TYPE_DESTINATION);
                 }
             }
         }
         foreach ($stateSet as $state => $symbolSet) {
             foreach ($symbolSet as $symbol => $destination) {
                 if (!isset($destination['state'])) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has no state for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_NO_STATE);
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has no state for state \"$state\" and symbol \"$symbol\"", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_NO_STATE);
                 }
             }
         }
         foreach ($stateSet as $state => $symbolSet) {
             foreach ($symbolSet as $symbol => $destination) {
                 if (!array_key_exists($destination['state'], $stateSet)) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent state {$destination['state']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_STATE);
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent state \"{$destination['state']}\" for state \"$state\" and symbol \"$symbol\"", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_STATE);
                 }
             }
         }
         foreach ($stateSet as $state => $symbolSet) {
             foreach ($symbolSet as $symbol => $destination) {
                 if (array_key_exists('action', $destination) && !is_string($destination['action'])) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has invalid type action for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_INVALID_TYPE_ACTION);
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination has invalid type action for state \"$state\" and symbol \"$symbol\"", self::EXCEPTION_STATE_SET_WITH_DESTINATION_HAS_INVALID_TYPE_ACTION);
                 }
             }
         }
@@ -120,7 +120,7 @@ class FiniteStateMachine
                 }
                 $class = new ReflectionClass($this);
                 if (!$class->hasMethod($destination['action'])) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent method {$destination['action']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_METHOD);
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to absent method \"{$destination['action']}\" for state \"$state\" and symbol \"$symbol\"", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_ABSENT_METHOD);
                 }
             }
         }
@@ -132,7 +132,7 @@ class FiniteStateMachine
                 $class = new ReflectionClass($this);
                 $method = $class->getMethod($destination['action']);
                 if (!$method->isPublic()) {
-                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to non-public method {$destination['action']} for state $state and symbol $symbol", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_NON_PUBLIC_METHOD);
+                    throw new InvalidArgumentException("Argument \$stateSet has invalid value: destination refers to non-public method \"{$destination['action']}\" for state \"$state\" and symbol \"$symbol\"", self::EXCEPTION_STATE_SET_WITH_DESTINATION_REFERS_TO_NON_PUBLIC_METHOD);
                 }
             }
         }
@@ -146,7 +146,7 @@ class FiniteStateMachine
         $nonLinkedStates = array_diff(array_slice($states, 1), $linkedStates);
         if ($nonLinkedStates) {
             $nonLinkedState = array_shift($nonLinkedStates);
-            throw new InvalidArgumentException("Argument \$stateSet has invalid value: there is a state $nonLinkedState with no reference to", self::EXCEPTION_STATE_SET_WITH_DESTINATION_WITH_STATE_WITH_NO_REFERENCE_TO);
+            throw new InvalidArgumentException("Argument \$stateSet has invalid value: there is a state \"$nonLinkedState\" with no reference to", self::EXCEPTION_STATE_SET_WITH_DESTINATION_WITH_STATE_WITH_NO_REFERENCE_TO);
         }
         return true;
     }
