@@ -5,19 +5,36 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 /**
  * public function test_VerifyLog_Default_CallsVerifyStateSet()
  * public function test_VerifyLog_InvalidTypeLog_ThrowsException()
- * public function test_VerifyLog_InvalidStructureLog_ThrowsException()
  * public function test_VerifyLog_InvalidLengthLog_ThrowsException()
+ * public function test_VerifyLog_InvalidLengthLog_ThrowsException_CertainKeys()
  * public function test_VerifyLog_LogWithInvalidKeys_ThrowsException()
  * public function test_VerifyLog_ValidArguments_ReturnsTrue()
  */
 class Fsm_VerifyLogTest extends FsmTestCase
 {
+    protected $_exceptionMessage;
+
     public function setUp()
     {
         $this->_fsm = $this->getMockBuilder(self::FSM_CLASS_NAME)->
             disableOriginalConstructor()->
             setMethods(array('verifyStateSet'))->
             getMock();
+        $this->_exceptionMessage = null;
+    }
+
+    public function assertExceptionMessage($stateSet, $log, $key, $value)
+    {
+        if (is_null($this->_exceptionMessage)) {
+            try {
+                $this->_fsm->verifyLog($stateSet, $log);
+                $this->_exceptionMessage = '';
+            } catch (Exception $e) {
+                $this->_exceptionMessage = $e->getMessage();
+            }
+        }
+        $regExp = preg_quote("$key $value", '/');
+        $this->assertRegExp("/$regExp/", $this->_exceptionMessage);
     }
 
     public function test_VerifyLog_Default_CallsVerifyStateSet()
@@ -193,19 +210,24 @@ class Fsm_VerifyLogTest extends FsmTestCase
      * @group issue1
      * @group issue1_reason
      * @group issue1_log_verification
+     * @group issue22
      * @dataProvider provideInvalidLengthLogs
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 301
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid log length \d+$/
      */
     public function test_VerifyLog_InvalidLengthLog_ThrowsException($stateSet, $log, $length)
     {
-        try {
-            $this->_fsm->verifyLog($stateSet, $log);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
-            $this->assertStringEndsWith("invalid log length: $length", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideInvalidLengthLogs
+     */
+    public function test_VerifyLog_InvalidLengthLog_ThrowsException_CertainKeys($stateSet, $log, $length)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'length', $length);
     }
 
     /**

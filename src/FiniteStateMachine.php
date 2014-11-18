@@ -742,7 +742,7 @@ class FiniteStateMachine
             }
         }
         if ($length < 2) {
-            throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length: $length", self::EXCEPTION_INVALID_LENGTH_LOG);
+            throw new InvalidArgumentException("Argument \$log has invalid value: invalid log length $length", self::EXCEPTION_INVALID_LENGTH_LOG);
         }
         foreach ($log as $logRecordIndex => $logRecord) {
             if (!is_array($logRecord)) {
