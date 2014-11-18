@@ -168,7 +168,7 @@ class Fsm_ActionTest extends FsmTestCase
                 'state' =>'PROCESSING',
                 'symbol' => 'pending',
                 'arguments' => array(
-                    '91a7dd0a0e2597f3a1f85833de9ba426',
+                    'b026324c6904b2a9cb4b88d6d61c81d1',
                 ),
                 'method' => 'pend',
                 'newState' => 'PENDING',
@@ -184,7 +184,7 @@ class Fsm_ActionTest extends FsmTestCase
                 'state' =>'PENDING',
                 'symbol' => 'void',
                 'arguments' => array(
-                    '91a7dd0a0e2597f3a1f85833de9ba436',
+                    '26ab0db90d72e28ad0ba1e22ee510510',
                 ),
                 'method' => 'void',
                 'newState' => 'VOID',
