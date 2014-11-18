@@ -49,32 +49,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
         $this->_fsm->verifyLog($stateSet, array());
     }
 
-    protected function _testLogValue($stateSet, $log, $logRecordIndex = null, $variable = null)
-    {
-        try {
-            $this->_fsm->verifyLog($stateSet, $log);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
-            if (!is_null($logRecordIndex) && !is_null($variable)) {
-                $this->assertStringEndsWith("invalid value $variable at index $logRecordIndex", $e->getMessage());
-            }
-            throw $e;
-        }
-    }
-
-    protected function _testLogSequence($stateSet, $log, $logRecordIndex = null, $variable = null)
-    {
-        try {
-            $this->_fsm->verifyLog($stateSet, $log);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
-            if (!is_null($logRecordIndex) && !is_null($variable)) {
-                $this->assertStringEndsWith("invalid value $variable in sequence at index $logRecordIndex", $e->getMessage());
-            }
-            throw $e;
-        }
-    }
-
     protected function _provideLogs($logs)
     {
         $stateSets = array_map('array_shift', $this->provideValidStateSets());
