@@ -198,38 +198,71 @@ class Fsm_VerifyLogTest extends FsmTestCase
         $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
-    public function providLogsWithInvalidKeys()
+    public function provideLogsWithInvalidKeys()
     {
-        $stateSets = array_map('array_shift', $this->provideValidStateSets());
-        $argumentSets = array();
-        $validKeys = array(
-            'state',
-            'reason',
-            'symbol',
-            'timestamp',
-        );
-        foreach ($validKeys as $validKey) {
-            $length = rand(2, 4);
-            $logRecordIndex = rand(0, $length - 1);
-            $log = array();
-            for ($i = 0; $i < $length; $i++) {
-                $log[] = array_fill_keys($validKeys, null);
-            }
-            unset($log[$logRecordIndex][$validKey]);
-            $stateSetIndex = rand(0, sizeof($stateSets) - 1);
-            $stateSet = $stateSets[$stateSetIndex];
-            $argumentSets[] = array(
+        $stateSet = $this->_getBillingStateSet();
+        return array(
+            array(
                 'stateSet' => $stateSet,
-                'log' => $log,
-                'logRecordIndex' => $logRecordIndex,
-            );
-        }
-        return $argumentSets;
+                'log' => array(
+                    0 => array('state' => 'INIT',     'reason' => 'init',   'symbol' => null,        'timestamp' => '1.000001'),
+                    1 => array(                                                                                               ),
+                    2 => array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout',  'timestamp' => '1.000003'),
+                    3 => array('state' => 'INIT',     'reason' => 'reset',  'symbol' => null,        'timestamp' => '1.000004'),
+                    4 => array('state' => 'INIT',     'reason' => 'sleep',  'symbol' => null,        'timestamp' => '1.000005'),
+                ),
+                'logRecordIndex' => 1,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    0 => array('state' => 'INIT',     'reason' => 'init',   'symbol' => null,        'timestamp' => '1.000001'),
+                    1 => array('state' => 'INIT',     'reason' => 'action', 'symbol' => '*',         'timestamp' => '1.000002'),
+                    2 => array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout',  'timestamp' => '1.000003'),
+                    3 => array(                       'reason' => 'reset',  'symbol' => null,        'timestamp' => '1.000004'),
+                    4 => array('state' => 'INIT',     'reason' => 'sleep',  'symbol' => null,        'timestamp' => '1.000005'),
+                ),
+                'logRecordIndex' => 3,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    0 => array('state' => 'INIT',     'reason' => 'init',   'symbol' => null,        'timestamp' => '1.000001'),
+                    1 => array('state' => 'INIT',     'reason' => 'action', 'symbol' => '*',         'timestamp' => '1.000002'),
+                    2 => array('state' => 'CHECKOUT',                       'symbol' => 'checkout',  'timestamp' => '1.000003'),
+                    3 => array('state' => 'INIT',     'reason' => 'reset',  'symbol' => null,        'timestamp' => '1.000004'),
+                    4 => array('state' => 'INIT',     'reason' => 'sleep',  'symbol' => null,        'timestamp' => '1.000005'),
+                ),
+                'logRecordIndex' => 2,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    0 => array('state' => 'INIT',     'reason' => 'init',   'symbol' => null,        'timestamp' => '1.000001'),
+                    1 => array('state' => 'INIT',     'reason' => 'action', 'symbol' => '*',         'timestamp' => '1.000002'),
+                    2 => array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout',  'timestamp' => '1.000003'),
+                    3 => array('state' => 'INIT',     'reason' => 'reset',  'symbol' => null,        'timestamp' => '1.000004'),
+                    4 => array('state' => 'INIT',     'reason' => 'sleep',                           'timestamp' => '1.000005'),
+                ),
+                'logRecordIndex' => 4,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'log' => array(
+                    0 => array('state' => 'INIT',     'reason' => 'init',   'symbol' => null,                                 ),
+                    1 => array('state' => 'INIT',     'reason' => 'action', 'symbol' => '*',         'timestamp' => '1.000002'),
+                    2 => array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout',  'timestamp' => '1.000003'),
+                    3 => array('state' => 'INIT',     'reason' => 'reset',  'symbol' => null,        'timestamp' => '1.000004'),
+                    4 => array('state' => 'INIT',     'reason' => 'sleep',  'symbol' => null,        'timestamp' => '1.000005'),
+                ),
+                'logRecordIndex' => 0,
+            ),
+        );
     }
 
     /**
      * @group issue22
-     * @dataProvider providLogsWithInvalidKeys
+     * @dataProvider provideLogsWithInvalidKeys
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 103
      * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid keys at index \d+$/
@@ -241,7 +274,7 @@ class Fsm_VerifyLogTest extends FsmTestCase
 
     /**
      * @group issue22
-     * @dataProvider providLogsWithInvalidKeys
+     * @dataProvider provideLogsWithInvalidKeys
      */
     public function test_VerifyLog_LogWithInvalidKeys_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
     {
