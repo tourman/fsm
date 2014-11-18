@@ -6,17 +6,35 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifySymbol_InvalidTypeSymbol_ThrowsException()
  * public function test_VerifySymbol_IsInitializedReturnsFalse_ThrowsException()
  * public function test_VerifySymbol_SymbolIsOutOfAlphabet_ThrowsException()
+ * public function test_VerifySymbol_SymbolIsOutOfAlphabet_ThrowsException_CertainKeys()
  * public function test_VerifySymbol_SymbolIsOutOfState_ThrowsException()
  * public function test_VerifySymbol_ValidSymbol_ReturnsTrue()
  */
 class Fsm_VerifySymbolTest extends FsmTestCase
 {
+    protected $_exceptionMessage;
+
     public function setUp()
     {
         $this->_fsm = $this->getMockBuilder(self::FSM_CLASS_NAME)->
             disableOriginalConstructor()->
             setMethods(array('isInitialized'))->
             getMock();
+        $this->_exceptionMessage = null;
+    }
+
+    public function assertExceptionMessage($symbol, $key, $value)
+    {
+        if (is_null($this->_exceptionMessage)) {
+            try {
+                $this->_fsm->verifySymbol($symbol);
+                $this->_exceptionMessage = '';
+            } catch (Exception $e) {
+                $this->_exceptionMessage = $e->getMessage();
+            }
+        }
+        $regExp = preg_quote("$key $value", '/');
+        $this->assertRegExp("/$regExp/", $this->_exceptionMessage);
     }
 
     public function provideInvalidTypeSymbols()
@@ -80,20 +98,25 @@ class Fsm_VerifySymbolTest extends FsmTestCase
 
     public function provideOutOfAlphabetSymbols()
     {
-        $argumentSets = $this->provideValidStates();
-        foreach ($argumentSets as &$argumentSet) {
-            $alphabet = $this->_getAlphabet($argumentSet['stateSet']);
-            do {
-                $symbol = md5(uniqid());
-            } while (in_array($symbol, $alphabet));
-            $argumentSet = array(
-                'stateSet' => $argumentSet['stateSet'],
-                'symbol' => $symbol,
+        $stateSet = $this->_getBillingStateSet();
+        $alphabet = '["*","checkout","completed","failed","pending","processing","void"]';
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'symbol' => '8d7e35631f830f2c5b9685450a2b8568',
                 'alphabet' => $alphabet,
-            );
-        }
-        unset($argumentSet);
-        return $argumentSets;
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'symbol' => '',
+                'alphabet' => $alphabet,
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'symbol' => ' ',
+                'alphabet' => $alphabet,
+            ),
+        );
     }
 
     /**
@@ -101,13 +124,25 @@ class Fsm_VerifySymbolTest extends FsmTestCase
      * @dataProvider provideOutOfAlphabetSymbols
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 132
-     * @expectedExceptionMessageRegExp /^Argument \$symbol has invalid value: symbol \S+ is out of the alphabet \(\S+\)$/
+     * @expectedExceptionMessageRegExp /^Argument \$symbol has invalid value: symbol "[^"]*" is out of the alphabet \[("[^"]*",)*"[^"]*"\]$/
      */
     public function test_VerifySymbol_SymbolIsOutOfAlphabet_ThrowsException($stateSet, $symbol, $alphabet)
     {
         $this->setStateSet($stateSet);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
         $this->_fsm->verifySymbol($symbol);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideOutOfAlphabetSymbols
+     */
+    public function test_VerifySymbol_SymbolIsOutOfAlphabet_ThrowsException_CertainKeys($stateSet, $symbol, $alphabet)
+    {
+        $this->setStateSet($stateSet);
+        $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
+        $this->assertExceptionMessage($symbol, 'symbol', "\"$symbol\"");
+        $this->assertExceptionMessage($symbol, 'alphabet', $alphabet);
     }
 
     public function provideOutOfStateSymbols()

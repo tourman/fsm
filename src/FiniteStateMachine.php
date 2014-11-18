@@ -257,8 +257,7 @@ class FiniteStateMachine
         }
         $alphabet = $this->_getAlphabet($this->_stateSet);
         if (!in_array($symbol, $alphabet)) {
-            $alphabet = implode('","', $alphabet);
-            $alphabet = "(\"$alphabet\")";
+            $alphabet = json_encode($alphabet);
             throw new InvalidArgumentException("Argument \$symbol has invalid value: symbol \"$symbol\" is out of the alphabet $alphabet", self::EXCEPTION_SYMBOL_IS_OUT_OF_ALPHABET);
         }
         if (!array_key_exists($symbol, $this->_stateSet[$this->_state])) {
