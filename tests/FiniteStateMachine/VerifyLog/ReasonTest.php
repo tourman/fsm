@@ -14,6 +14,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_Reason_Init_NotAtTheFirstPosition_ThrowsException
  * public function test_VerifyLog_Reason_Init_NotAtTheFirstPosition_ThrowsException_CertainKeys
  * public function test_VerifyLog_Reason_NotWakeup_AfterSleep_ThrowsException
+ * public function test_VerifyLog_Reason_NotWakeup_AfterSleep_ThrowsException_CertainKeys
  */
 class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
 {
@@ -629,12 +630,23 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
     /**
      * @group issue1
      * @group issue1_reason
+     * @group issue22
      * @dataProvider provideLogsWithNotWakepAfterSleep
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 504
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid value reason in sequence at index \d+$/
      */
     public function test_VerifyLog_Reason_NotWakeup_AfterSleep_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideLogsWithNotWakepAfterSleep
+     */
+    public function test_VerifyLog_Reason_NotWakeup_AfterSleep_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 }
