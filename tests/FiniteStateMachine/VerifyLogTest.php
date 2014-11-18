@@ -263,23 +263,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
         $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
-    protected function _provideLogsWithSpecificValues($key, $values)
-    {
-        $argumentSets = array();
-        $templateArgumentSets = $this->provideValidLogs();
-        foreach ($values as $value) {
-            $templateArgumentSetIndex = rand(0, sizeof($templateArgumentSets) - 1);
-            $argumentSet = $templateArgumentSets[$templateArgumentSetIndex];
-            $log = &$argumentSet['log'];
-            $logIndex = rand(0, sizeof($log) - 1);
-            $log[$logIndex][$key] = $value;
-            unset($log);
-            $argumentSet['logRecordIndex'] = $logIndex;
-            $argumentSets[] = $argumentSet;
-        }
-        return $argumentSets;
-    }
-
     public function provideValidLogs()
     {
         $stateSet = $this->_getBillingStateSet();
