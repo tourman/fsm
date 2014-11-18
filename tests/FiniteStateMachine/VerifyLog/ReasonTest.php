@@ -149,24 +149,9 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'action',
-                        'symbol' => null,
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'action',
-                        'symbol' => 'checkout',
-                        'timestamp' => '1.000002',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000003',
-                    ),
+                    array('state' => 'INIT',     'reason' => 'action', 'symbol' => null,       'timestamp' => '1.000001'),
+                    array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout', 'timestamp' => '1.000002'),
+                    array('state' => 'CHECKOUT', 'reason' => 'sleep',  'symbol' => null,       'timestamp' => '1.000003'),
                 ),
                 'logRecordIndex' => 0,
                 'extra' => 'action',
@@ -174,24 +159,9 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'reset',
-                        'symbol' => null,
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'action',
-                        'symbol' => 'checkout',
-                        'timestamp' => '1.000002',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000003',
-                    ),
+                    array('state' => 'INIT',     'reason' => 'reset',  'symbol' => null,       'timestamp' => '1.000001'),
+                    array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout', 'timestamp' => '1.000002'),
+                    array('state' => 'CHECKOUT', 'reason' => 'sleep',  'symbol' => null,       'timestamp' => '1.000003'),
                 ),
                 'logRecordIndex' => 0,
                 'extra' => 'action',
@@ -199,24 +169,9 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'wakeup',
-                        'symbol' => null,
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'action',
-                        'symbol' => 'checkout',
-                        'timestamp' => '1.000002',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000003',
-                    ),
+                    array('state' => 'INIT',     'reason' => 'wakeup', 'symbol' => null,       'timestamp' => '1.000001'),
+                    array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout', 'timestamp' => '1.000002'),
+                    array('state' => 'CHECKOUT', 'reason' => 'sleep',  'symbol' => null,       'timestamp' => '1.000003'),
                 ),
                 'logRecordIndex' => 0,
                 'extra' => 'action',
@@ -224,24 +179,9 @@ class Fsm_VerifyLog_ReasonTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'action',
-                        'symbol' => 'checkout',
-                        'timestamp' => '1.000002',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000003',
-                    ),
+                    array('state' => 'INIT',     'reason' => 'sleep',  'symbol' => null,       'timestamp' => '1.000001'),
+                    array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout', 'timestamp' => '1.000002'),
+                    array('state' => 'CHECKOUT', 'reason' => 'sleep',  'symbol' => null,       'timestamp' => '1.000003'),
                 ),
                 'logRecordIndex' => 0,
                 'extra' => 'action',
