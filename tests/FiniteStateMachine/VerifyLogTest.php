@@ -10,6 +10,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_InvalidStructureLog_ThrowsException()
  * public function test_VerifyLog_InvalidStructureLog_ThrowsException_CertainKeys()
  * public function test_VerifyLog_LogWithInvalidKeys_ThrowsException()
+ * public function test_VerifyLog_LogWithInvalidKeys_ThrowsException_CertainKeys()
  * public function test_VerifyLog_ValidArguments_ReturnsTrue()
  */
 class Fsm_VerifyLogTest extends FsmTestCase
@@ -268,20 +269,24 @@ class Fsm_VerifyLogTest extends FsmTestCase
     }
 
     /**
+     * @group issue22
      * @dataProvider providLogsWithInvalidKeys
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 103
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid keys at index \d+$/
      */
     public function test_VerifyLog_LogWithInvalidKeys_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        //$this->_testLogValue($stateSet, $log, $logRecordIndex);
-        try {
-            $this->_fsm->verifyLog($stateSet, $log);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
-            $this->assertStringEndsWith("invalid keys at index $logRecordIndex", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider providLogsWithInvalidKeys
+     */
+    public function test_VerifyLog_LogWithInvalidKeys_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
     protected function _provideLogsWithSpecificValues($key, $values)
