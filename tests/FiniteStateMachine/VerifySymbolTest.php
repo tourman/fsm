@@ -32,18 +32,15 @@ class Fsm_VerifySymbolTest extends FsmTestCase
     }
 
     /**
+     * @group issue22
      * @dataProvider provideInvalidTypeSymbols
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 131
+     * @epxectedExceptionMessage Argument $symbol has invalid type
      */
     public function test_VerifySymbol_InvalidTypeSymbol_ThrowsException($symbol)
     {
-        try {
-            $this->_fsm->verifySymbol($symbol);
-        } catch (Exception $e) {
-            $this->assertInvalidTypeArgumentExceptionMessage($e, 'symbol');
-            throw $e;
-        }
+        $this->_fsm->verifySymbol($symbol);
     }
 
     public function provideValidArguments()
