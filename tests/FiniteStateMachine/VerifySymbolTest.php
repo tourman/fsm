@@ -53,9 +53,11 @@ class Fsm_VerifySymbolTest extends FsmTestCase
     }
 
     /**
+     * @group issue22
      * @dataProvider provideValidArguments
      * @expectedException RuntimeException
      * @expectedExceptionCode 111
+     * @expectedExceptionMessage States are not set
      */
     public function test_VerifySymbol_IsInitializedReturnsFalse_ThrowsException($symbol)
     {
