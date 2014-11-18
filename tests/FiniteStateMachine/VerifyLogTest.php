@@ -49,21 +49,6 @@ class Fsm_VerifyLogTest extends FsmTestCase
         $this->_fsm->verifyLog($stateSet, array());
     }
 
-    protected function _provideLogs($logs)
-    {
-        $stateSets = array_map('array_shift', $this->provideValidStateSets());
-        $argumentSets = array();
-        foreach ($logs as $log) {
-            $stateSetIndex = rand(0, sizeof($stateSets) - 1);
-            $stateSet = $stateSets[$stateSetIndex];
-            $argumentSets[] = array(
-                'stateSet' => $stateSet,
-                'log' => $log,
-            );
-        }
-        return $argumentSets;
-    }
-
     public function provideInvalidTypeLogs()
     {
         $stateSet = $this->_getBillingStateSet();
