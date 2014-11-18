@@ -97,23 +97,17 @@ class Fsm_VerifySymbolTest extends FsmTestCase
     }
 
     /**
+     * @group issue22
      * @dataProvider provideOutOfAlphabetSymbols
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 132
+     * @expectedExceptionMessageRegExp /^Argument \$symbol has invalid value: symbol \S+ is out of the alphabet \(\S+\)$/
      */
     public function test_VerifySymbol_SymbolIsOutOfAlphabet_ThrowsException($stateSet, $symbol, $alphabet)
     {
         $this->setStateSet($stateSet);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
-        try {
-            $this->_fsm->verifySymbol($symbol);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'symbol');
-            $alphabet = implode('","', $alphabet);
-            $alphabet = "(\"$alphabet\")";
-            $this->assertStringEndsWith("symbol \"$symbol\" is out of the alphabet $alphabet", $e->getMessage());
-            throw $e;
-        }
+        $this->_fsm->verifySymbol($symbol);
     }
 
     public function provideOutOfStateSymbols()
