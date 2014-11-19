@@ -6,6 +6,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_Timestamp_InvalidType_ThrowsException
  * public function test_VerifyLog_Timestamp_InvalidType_ThrowsException_CertainKeys
  * public function test_VerifyLog_Timestamp_InvalidValue_ThrowsException
+ * public function test_VerifyLog_Timestamp_InvalidValue_ThrowsException_CertainKeys
  * public function test_VerifyLog_Timestamp_InvalidSequence_ThrowsException
  */
 class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
@@ -272,13 +273,24 @@ class Fsm_VerifyLog_TimestampTest extends Fsm_VerifyLogTestCase
      * @group issue1
      * @group issue1_timestamp
      * @group issue1_type_and_value
+     * @group issue22
      * @dataProvider provideLogsWithInvalidValueTimestamp
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 812
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid value timestamp at index \d+$/
      */
     public function test_VerifyLog_Timestamp_InvalidValue_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogValue($stateSet, $log, $logRecordIndex, false);
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideLogsWithInvalidValueTimestamp
+     */
+    public function test_VerifyLog_Timestamp_InvalidValue_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
     public function provideLogsWithInvalidSequenceTimestamp()
