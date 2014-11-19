@@ -53,72 +53,32 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => 1,
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000002',
-                    ),
+                    array('state' => 'INIT', 'reason' => 'init',  'symbol' => 1,              'timestamp' => '1.000001'),
+                    array('state' => 'INIT', 'reason' => 'sleep', 'symbol' => null,           'timestamp' => '1.000002'),
                 ),
                 'logRecordIndex' => 0,
             ),
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => 1.1,
-                        'timestamp' => '1.000002',
-                    ),
+                    array('state' => 'INIT', 'reason' => 'init',  'symbol' => null,           'timestamp' => '1.000001'),
+                    array('state' => 'INIT', 'reason' => 'sleep', 'symbol' => 1.1,            'timestamp' => '1.000002'),
                 ),
                 'logRecordIndex' => 1,
             ),
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => array(),
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000002',
-                    ),
+                    array('state' => 'INIT', 'reason' => 'init',  'symbol' => array(),        'timestamp' => '1.000001'),
+                    array('state' => 'INIT', 'reason' => 'sleep', 'symbol' => null,           'timestamp' => '1.000002'),
                 ),
                 'logRecordIndex' => 0,
             ),
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => new stdClass(),
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000002',
-                    ),
+                    array('state' => 'INIT', 'reason' => 'init',  'symbol' => new stdClass(), 'timestamp' => '1.000001'),
+                    array('state' => 'INIT', 'reason' => 'sleep', 'symbol' => null,           'timestamp' => '1.000002'),
                 ),
                 'logRecordIndex' => 0,
             ),
