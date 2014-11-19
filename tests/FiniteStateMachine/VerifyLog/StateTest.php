@@ -120,36 +120,16 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'SOME_RANDOM_STRING',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '1.000009',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000009',
-                    ),
+                    array('state' => 'SOME_RANDOM_STRING', 'reason' => 'init',  'symbol' => null, 'timestamp' => '1.000009'),
+                    array('state' => 'INIT',               'reason' => 'sleep', 'symbol' => null, 'timestamp' => '1.000009'),
                 ),
                 'logRecordIndex' => 0,
             ),
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '1.000009',
-                    ),
-                    array(
-                        'state' => 'SOME_RANDOM_STRING',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000009',
-                    ),
+                    array('state' => 'INIT',               'reason' => 'init',  'symbol' => null, 'timestamp' => '1.000009'),
+                    array('state' => 'SOME_RANDOM_STRING', 'reason' => 'sleep', 'symbol' => null, 'timestamp' => '1.000009'),
                 ),
                 'logRecordIndex' => 1,
             ),
