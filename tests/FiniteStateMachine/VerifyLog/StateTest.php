@@ -13,30 +13,6 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  */
 class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 {
-    protected function _testLogType($stateSet, $log, $logRecordIndex, $sequence)
-    {
-        $sequence = $sequence ? 'in sequence ' : '';
-        try {
-            $this->_fsm->verifyLog($stateSet, $log);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidTypeArgumentExceptionMessage($e, 'log');
-            $this->assertStringEndsWith("invalid type state {$sequence}at index $logRecordIndex", $e->getMessage());
-            throw $e;
-        }
-    }
-
-    protected function _testLogValue($stateSet, $log, $logRecordIndex, $sequence)
-    {
-        $sequence = $sequence ? 'in sequence ' : '';
-        try {
-            $this->_fsm->verifyLog($stateSet, $log);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidValueArgumentExceptionMessage($e, 'log');
-            $this->assertStringEndsWith("invalid value state {$sequence}at index $logRecordIndex", $e->getMessage());
-            throw $e;
-        }
-    }
-
     public function provideLogsWithInvalidTypeState()
     {
         $stateSet = $this->_getBillingStateSet();
