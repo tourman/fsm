@@ -66,7 +66,7 @@ class Fsm_VerifySymbolTest extends FsmTestCase
     {
         return array(
             array(
-                md5(uniqid()),
+                'd8e8fca2dc0f896fd7cb4cb0031ba249',
             ),
         );
     }
