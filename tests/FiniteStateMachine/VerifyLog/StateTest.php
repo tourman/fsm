@@ -205,30 +205,10 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '147.800800',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'action',
-                        'symbol' => 'checkout',
-                        'timestamp' => '147.800801',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'reset',
-                        'symbol' => null,
-                        'timestamp' => '147.800802',
-                    ),
-                    array(
-                        'state' => 'CHECKOUT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '148.800800',
-                    ),
+                    array('state' => 'INIT',     'reason' => 'init',   'symbol' => null,       'timestamp' => '147.800800'),
+                    array('state' => 'CHECKOUT', 'reason' => 'action', 'symbol' => 'checkout', 'timestamp' => '147.800801'),
+                    array('state' => 'CHECKOUT', 'reason' => 'reset',  'symbol' => null,       'timestamp' => '147.800802'),
+                    array('state' => 'CHECKOUT', 'reason' => 'sleep',  'symbol' => null,       'timestamp' => '148.800800'),
                 ),
                 'logRecordIndex' => 2,
             ),
