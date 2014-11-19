@@ -13,8 +13,8 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_ResetReasonWithNotInitState_ThrowsException_CertainKeys
  * public function test_VerifyLog_ActionReasonWithMismatchedState_ThrowsException
  * public function test_VerifyLog_ActionReasonWithMismatchedState_ThrowsException_CertainKeys
- * public function test_VerifyLog_ActionSleepWithStateFromNoPreviousRecord_ThrowsException
- * public function test_VerifyLog_ActionSleepWithStateFromNoPreviousRecord_ThrowsException_CertainKeys
+ * public function test_VerifyLog_SleepReasonWithStateFromNoPreviousRecord_ThrowsException
+ * public function test_VerifyLog_SleepReasonWithStateFromNoPreviousRecord_ThrowsException_CertainKeys
  * public function test_VerifyLog_ActionWakeupWithStateFromNoPreviousRecord_ThrowsException
  * public function test_VerifyLog_ActionWakeupWithStateFromNoPreviousRecord_ThrowsException_CertainKeys
  */
@@ -306,7 +306,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      * @expectedExceptionCode 604
      * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid value state in sequence at index \d+$/
      */
-    public function test_VerifyLog_ActionSleepWithStateFromNoPreviousRecord_ThrowsException($stateSet, $log, $logRecordIndex)
+    public function test_VerifyLog_SleepReasonWithStateFromNoPreviousRecord_ThrowsException($stateSet, $log, $logRecordIndex)
     {
         $this->_fsm->verifyLog($stateSet, $log);
     }
@@ -315,7 +315,7 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      * @group issue22
      * @dataProvider provideLogsWithSleepReasonWithStateFromNoPreviousRecord
      */
-    public function test_VerifyLog_ActionSleepWithStateFromNoPreviousRecord_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    public function test_VerifyLog_SleepReasonWithStateFromNoPreviousRecord_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
     {
         $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
