@@ -193,20 +193,29 @@ class Fsm_VerifySymbolTest extends FsmTestCase
 
     public function provideValidSymbols()
     {
-        $argumentSets = array();
-        $stateSets = array_map('array_shift', $this->provideValidStateSets());
-        foreach ($stateSets as $stateSet) {
-            foreach ($stateSet as $state => $symbolState) {
-                foreach ($symbolState as $symbol => $destination) {
-                    $argumentSets[] = array(
-                        'stateSet' => $stateSet,
-                        'state' => $state,
-                        'symbol' => $symbol,
-                    );
-                }
-            }
-        }
-        return $argumentSets;
+        $stateSet = $this->_getBillingStateSet();
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'state' => 'INIT',
+                'symbol' => '*',
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'state' => 'CHECKOUT',
+                'symbol' => 'void',
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'state' => 'PROCESSING',
+                'symbol' => 'pending',
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'state' => 'PENDING',
+                'symbol' => 'failed',
+            ),
+        );
     }
 
     /**
