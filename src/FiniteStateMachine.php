@@ -762,11 +762,22 @@ class FiniteStateMachine
     public function displayLog()
     {
         $log = $this->_log;
+        $diffs = array();
+        foreach ($log as $logRecordIndex => $logRecord) {
+            if (!$logRecordIndex) {
+                $diffs[] = 0;
+            } else {
+                $diffs[] = $logRecord['timestamp'] - $log[$logRecordIndex - 1]['timestamp'];
+            }
+        }
+        $maxDiff = max($diffs);
+        $maxDiff = sprintf('%.6f', $maxDiff);
+        $maxDiffLength = strlen($maxDiff);
         foreach ($log as $logRecordIndex => &$logRecord) {
             if (!$logRecordIndex) {
                 $logRecord['diff'] = '';
             } else {
-                $logRecord['diff'] = sprintf('%.6f', $logRecord['timestamp'] - $log[$logRecordIndex - 1]['timestamp']);
+                $logRecord['diff'] = sprintf("%$maxDiffLength.6f", $logRecord['timestamp'] - $log[$logRecordIndex - 1]['timestamp']);
             }
         }
         unset($logRecord);

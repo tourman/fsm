@@ -10,13 +10,13 @@ class Fsm_DisplayLogTest extends FsmTestCase
     public function provideValidLogs()
     {
         $expectedContent[0] = <<<EOC
-state                             reason  symbol  timestamp          diff      
--------------------------------------------------------------------------------
-INIT                              init            1409297603.783227            
-b2118a9a6b91e1b40770231419b07f60  action  *       1409297603.918776  0.135549  
-INIT                              reset           1409297603.918778  0.000002  
-INIT                              sleep           1409297603.918779  0.000001  
-INIT                              wakeup          1409297603.918779  0.000000  
+state                             reason  symbol  timestamp          diff         
+----------------------------------------------------------------------------------
+INIT                              init            1409296102.783227               
+b2118a9a6b91e1b40770231419b07f60  action  *       1409297503.918776  1401.135549  
+INIT                              reset           1409297603.918778   100.000002  
+INIT                              sleep           1409297603.918779     0.000001  
+INIT                              wakeup          1409297603.918779     0.000000  
 
 EOC;
         $expectedContent[1] = <<<EOC
@@ -33,13 +33,13 @@ EOC;
                         'state' => 'INIT',
                         'reason' => 'init',
                         'symbol' => null,
-                        'timestamp' => '1409297603.783227',
+                        'timestamp' => '1409296102.783227',
                     ),
                     array(
                         'state' => 'b2118a9a6b91e1b40770231419b07f60',
                         'reason' => 'action',
                         'symbol' => '*',
-                        'timestamp' => '1409297603.918776',
+                        'timestamp' => '1409297503.918776',
                     ),
                     array(
                         'state' => 'INIT',
