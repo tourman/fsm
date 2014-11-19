@@ -8,6 +8,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_State_InvalidValue_ThrowsException
  * public function test_VerifyLog_State_InvalidValue_ThrowsException_CertainKeys
  * public function test_VerifyLog_InitReasonWithNotInitState_ThrowsException
+ * public function test_VerifyLog_InitReasonWithNotInitState_ThrowsException_CertainKeys
  * public function test_VerifyLog_ResetReasonWithNotInitState_ThrowsException
  * public function test_VerifyLog_ActionReasonWithMismatchedState_ThrowsException
  * public function test_VerifyLog_ActionSleepWithStateFromNoPreviousRecord_ThrowsException
@@ -253,13 +254,24 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
     /**
      * @group issue1
      * @group issue1_state
+     * @group issue22
      * @dataProvider provideLogsWithInitReasonWithNotInitState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 601
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid value state in sequence at index \d+$/
      */
     public function test_VerifyLog_InitReasonWithNotInitState_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideLogsWithInitReasonWithNotInitState
+     */
+    public function test_VerifyLog_InitReasonWithNotInitState_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
     public function provideLogsWithResetReasonWithNotInitState()
