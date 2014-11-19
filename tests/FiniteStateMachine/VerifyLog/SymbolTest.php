@@ -14,6 +14,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  * public function test_VerifyLog_ActionReasonWithEmptySymbol_ThrowsException
  * public function test_VerifyLog_ActionReasonWithEmptySymbol_ThrowsException_CertainKeys
  * public function test_VerifyLog_ActionReasonWithAbsentSymbol_ThrowsException
+ * public function test_VerifyLog_ActionReasonWithAbsentSymbol_ThrowsException_CertainKeys
  * public function test_VerifyLog_ActionReasonWithMismatchSymbol_ThrowsException
  * public function test_VerifyLog_SleepReasonWithNotEmptySymbol_ThrowsException
  * public function test_VerifyLog_WakeupReasonWithNotEmptySymbol_ThrowsException
@@ -420,13 +421,24 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
     /**
      * @group issue1
      * @group issue1_symbol
+     * @group issue22
      * @dataProvider provideLogsWithActionReasonWithAbsentSymbol
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 704
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid value: invalid value symbol in sequence at index \d+$/
      */
     public function test_VerifyLog_ActionReasonWithAbsentSymbol_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogValue($stateSet, $log, $logRecordIndex, true);
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideLogsWithActionReasonWithAbsentSymbol
+     */
+    public function test_VerifyLog_ActionReasonWithAbsentSymbol_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
     public function provideLogsWithActionReasonWithMismatchSymbol()
