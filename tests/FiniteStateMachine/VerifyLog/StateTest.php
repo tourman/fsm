@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
 
 /**
  * public function test_VerifyLog_State_InvalidType_ThrowsException
+ * public function test_VerifyLog_State_InvalidType_ThrowsException_CertainKeys
  * public function test_VerifyLog_State_InvalidValue_ThrowsException
  * public function test_VerifyLog_InitReasonWithNotInitState_ThrowsException
  * public function test_VerifyLog_ResetReasonWithNotInitState_ThrowsException
@@ -13,6 +14,28 @@ require_once(dirname(__FILE__) . implode(DIRECTORY_SEPARATOR, explode('/', '/../
  */
 class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
 {
+    protected $_exceptionMessage;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->_exceptionMessage = null;
+    }
+
+    public function assertExceptionMessage($stateSet, $log, $key, $value)
+    {
+        if (is_null($this->_exceptionMessage)) {
+            try {
+                $this->_fsm->verifyLog($stateSet, $log);
+                $this->_exceptionMessage = '';
+            } catch (Exception $e) {
+                $this->_exceptionMessage = $e->getMessage();
+            }
+        }
+        $regExp = preg_quote("$key $value", '/');
+        $this->assertRegExp("/$regExp/", $this->_exceptionMessage);
+    }
+
     public function provideLogsWithInvalidTypeState()
     {
         $stateSet = $this->_getBillingStateSet();
@@ -114,13 +137,24 @@ class Fsm_VerifyLog_StateTest extends Fsm_VerifyLogTestCase
      * @group issue1
      * @group issue1_state
      * @group issue1_type_and_value
+     * @group issue22
      * @dataProvider provideLogsWithInvalidTypeState
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 611
+     * @expectedExceptionMessageRegExp /^Argument \$log has invalid type: invalid type state at index \d+$/
      */
     public function test_VerifyLog_State_InvalidType_ThrowsException($stateSet, $log, $logRecordIndex)
     {
-        $this->_testLogType($stateSet, $log, $logRecordIndex, false);
+        $this->_fsm->verifyLog($stateSet, $log);
+    }
+
+    /**
+     * @group issue22
+     * @dataProvider provideLogsWithInvalidTypeState
+     */
+    public function test_VerifyLog_State_InvalidType_ThrowsException_CertainKeys($stateSet, $log, $logRecordIndex)
+    {
+        $this->assertExceptionMessage($stateSet, $log, 'index', $logRecordIndex);
     }
 
     public function provideLogsWithInvalidValueState()
