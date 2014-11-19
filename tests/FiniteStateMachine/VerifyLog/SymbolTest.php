@@ -194,24 +194,9 @@ class Fsm_VerifyLog_SymbolTest extends Fsm_VerifyLogTestCase
             array(
                 'stateSet' => $stateSet,
                 'log' => array(
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'init',
-                        'symbol' => null,
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'reset',
-                        'symbol' => '*',
-                        'timestamp' => '1.000001',
-                    ),
-                    array(
-                        'state' => 'INIT',
-                        'reason' => 'sleep',
-                        'symbol' => null,
-                        'timestamp' => '1.000002',
-                    ),
+                    array('state' => 'INIT', 'reason' => 'init',  'symbol' => null, 'timestamp' => '1.000001'),
+                    array('state' => 'INIT', 'reason' => 'reset', 'symbol' => '*',  'timestamp' => '1.000001'),
+                    array('state' => 'INIT', 'reason' => 'sleep', 'symbol' => null, 'timestamp' => '1.000002'),
                 ),
                 'logRecordIndex' => 1,
             ),
