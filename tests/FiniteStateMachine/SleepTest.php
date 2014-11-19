@@ -21,7 +21,7 @@ class Fsm_SleepTest extends FsmTestCase
         );
         $this->_fsm = $this->getMockBuilder('TestFiniteStateMachine')->setMethods($methods)->getMock();
         $this->_fsm->method('getTimestamp')->will($this->returnValue('1.000000'));
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         $this->_fsm->setStateSet($stateSet);
     }
 

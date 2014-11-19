@@ -19,23 +19,24 @@ class Fsm_ActionTest extends FsmTestCase
 {
     public function setUp()
     {
-        $this->_fsm = $this->getMockBuilder(self::FSM_CLASS_NAME)->
-            disableOriginalConstructor();
-    }
+        $methods = array(
+            'isInitialized',
+            'isSleep',
+            'verifySymbol',
+            'getTimestamp',
 
-    //It's essential to call this method every time we use test method
-    public function setMethods($methods = array())
-    {
-        $methods = array_merge(
-            array(
-                'isInitialized',
-                'isSleep',
-                'verifySymbol',
-                'getTimestamp',
-            ),
-            $methods
+            'close',
+            'checkout',
+            'process',
+            'pend',
+            'comlete',
+            'error',
+            'void',
         );
-        $this->_fsm = $this->_fsm->setMethods($methods)->getMock();
+        $this->_fsm = $this->getMockBuilder(self::FSM_CLASS_NAME)->
+            disableOriginalConstructor()->
+            setMethods($methods)->
+            getMock();
     }
 
     public function provideInvalidTypeArguments()
@@ -72,51 +73,34 @@ class Fsm_ActionTest extends FsmTestCase
      * @dataProvider provideInvalidTypeArguments
      * @expectedException InvalidArgumentException
      * @expectedExceptionCode 101
+     * @expectedExceptionMessage Argument $arguments has invalid type
      */
     public function test_Action_InvalidTypeArguments_ThrowsException($symbol, $arguments)
     {
-        $this->setMethods();
-        try {
-            $this->_fsm->action($symbol, $arguments);
-        } catch (InvalidArgumentException $e) {
-            $this->assertInvalidTypeArgumentExceptionMessage($e, 'arguments');
-            throw $e;
-        }
-    }
-
-    public function provideValidArguments()
-    {
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
-        return array(
-            array(
-                'stateSet' => $stateSet,
-                'symbol' => '*',
-                'arguments' => array(),
-            ),
-        );
-    }
-
-    protected function _getArguments()
-    {
-        $arguments = array();
-        $numArguments = rand(0, 3);
-        for ($i = 0; $i < $numArguments; $i++) {
-            $arguments[] = md5(uniqid());
-        }
-        return $arguments;
+        $this->_fsm->action($symbol, $arguments);
     }
 
     public function provideSymbols()
     {
         return array(
             array(
-                'symbol' => md5(uniqid()),
-                'arguments' => $this->_getArguments(),
+                'symbol' => '5b16c1a61ca98f261e353cc368a8b64f',
+                'arguments' => array(
+                    '3f7d0ac4b1c7ab0a833377b93c4bb0ee',
+                ),
+            ),
+            array(
+                'symbol' => '42fb9bf30fd36ffe0710d7635b685c78',
+                'arguments' => array(
+                    '4a8060ad67b332f5bacc9e44ca39f251',
+                    '91a7dd0a0e2597f3a1f85833de9ba416',
+                ),
             ),
         );
     }
 
     /**
+     * @group issue22_symbols
      * @dataProvider provideSymbols
      * @expectedException RuntimeException
      * @expectedExceptionCode 111
@@ -124,7 +108,6 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_ValidArguments_CallsIsInitialized($symbol, $arguments)
     {
-        $this->setMethods();
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(false));
         $this->_fsm->action($symbol, $arguments);
     }
@@ -132,6 +115,7 @@ class Fsm_ActionTest extends FsmTestCase
     /**
      * @group issue1
      * @group issue1_sleep_protected
+     * @group issue22_symbols
      * @dataProvider provideSymbols
      * @expectedException Exception
      * @expectedExceptionCode 112
@@ -139,18 +123,17 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_ValidArguments_CallsIsSleep($symbol, $arguments)
     {
-        $this->setMethods();
         $this->_fsm->expects($this->once())->method('isInitialized')->with()->will($this->returnValue(true));
         $this->_fsm->expects($this->once())->method('isSleep')->with()->will($this->returnValue(true));
         $this->_fsm->action($symbol, $arguments);
     }
 
     /**
+     * @group issue22_symbols
      * @dataProvider provideSymbols
      */
     public function test_Action_ValidArguments_CallsVerifySymbol($symbol, $arguments)
     {
-        $this->setMethods();
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
         $this->_fsm->expects($this->once())->method('isSleep')->will($this->returnValue(false));
         $this->_fsm->expects($this->once())->method('verifySymbol')->with($this->identicalTo($symbol));
@@ -159,32 +142,57 @@ class Fsm_ActionTest extends FsmTestCase
 
     public function provideMethods()
     {
-        $argumentSets = array();
-        $stateSets = array_map('array_shift', $this->provideValidStateSets());
-        foreach ($stateSets as $stateSet) {
-            foreach ($stateSet as $state => $symbolSet) {
-                foreach ($symbolSet as $symbol => $destination) {
-                    if (!isset($destination['action'])) {
-                        continue;
-                    }
-                    $argumentSets[] = array(
-                        'stateSet' => $stateSet,
-                        'state' => $state,
-                        'symbol' => $symbol,
-                        'arguments' => $this->_getArguments(),
-                        'method' => $destination['action'],
-                        'newState' => $destination['state'],
-                        'logRecord' => array(
-                            'state' => $destination['state'],
-                            'reason' => 'action',
-                            'symbol' => $symbol,
-                            'timestamp' => $this->generateTimestamp(),
-                        ),
-                    );
-                }
-            }
-        }
-        return $argumentSets;
+        $stateSet = $this->_getBillingStateSet();
+        return array(
+            array(
+                'stateSet' => $stateSet,
+                'state' =>'INIT',
+                'symbol' => 'checkout',
+                'arguments' => array(
+                    '91a7dd0a0e2597f3a1f85833de9ba416',
+                ),
+                'method' => 'checkout',
+                'newState' => 'CHECKOUT',
+                'expectedLogRecord' => array(
+                    'state' => 'CHECKOUT',
+                    'reason' => 'action',
+                    'symbol' => 'checkout',
+                    'timestamp' => $this->generateTimestamp(),
+                ),
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'state' =>'PROCESSING',
+                'symbol' => 'pending',
+                'arguments' => array(
+                    'b026324c6904b2a9cb4b88d6d61c81d1',
+                ),
+                'method' => 'pend',
+                'newState' => 'PENDING',
+                'expectedLogRecord' => array(
+                    'state' => 'PENDING',
+                    'reason' => 'action',
+                    'symbol' => 'pending',
+                    'timestamp' => $this->generateTimestamp(),
+                ),
+            ),
+            array(
+                'stateSet' => $stateSet,
+                'state' =>'PENDING',
+                'symbol' => 'void',
+                'arguments' => array(
+                    '26ab0db90d72e28ad0ba1e22ee510510',
+                ),
+                'method' => 'void',
+                'newState' => 'VOID',
+                'expectedLogRecord' => array(
+                    'state' => 'VOID',
+                    'reason' => 'action',
+                    'symbol' => 'void',
+                    'timestamp' => $this->generateTimestamp(),
+                ),
+            ),
+        );
     }
 
     /**
@@ -192,7 +200,6 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_ValidArguments_CallsAppropriateMethodWithTheArguments($stateSet, $state, $symbol, $arguments, $method)
     {
-        $this->setMethods(array($method));
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
@@ -208,7 +215,6 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_ValidArguments_SetsState($stateSet, $state, $symbol, $arguments, $method, $newState)
     {
-        $this->setMethods(array($method));
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
@@ -223,7 +229,6 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_ValidArguments_PushesLog($stateSet, $state, $symbol, $arguments, $method, $newState, $expectedLogRecord)
     {
-        $this->setMethods(array($method));
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('getTimestamp')->will($this->returnValue($expectedLogRecord['timestamp']));
@@ -240,7 +245,6 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_ValidArguments_CallsAppropriateMethodBeforeStateIsSet($stateSet, $expectedState, $symbol, $arguments, $method)
     {
-        $this->setMethods(array($method));
         $this->setStateSet($stateSet);
         $this->setState($expectedState);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
@@ -263,7 +267,6 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_ValidArguments_CallsAppropriateMethodBeforeLogIsPushed($stateSet, $expectedState, $symbol, $arguments, $method, $newState, $expectedLogRecord)
     {
-        $this->setMethods(array($method));
         $this->setStateSet($stateSet);
         $this->setState($expectedState);
         //It should be checked for call time() any times because it should not be call actually
@@ -289,7 +292,6 @@ class Fsm_ActionTest extends FsmTestCase
      */
     public function test_Action_NoArguments_UsesDefaultValueOfArguments($stateSet, $state, $symbol, $arguments, $method)
     {
-        $this->setMethods(array($method));
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));
@@ -304,7 +306,6 @@ class Fsm_ActionTest extends FsmTestCase
     public function test_Action_ValidArguments_ReturnsMethodReturnResult($stateSet, $state, $symbol, $arguments, $method)
     {
         $expectedResult = md5(uniqid());
-        $this->setMethods(array($method));
         $this->setStateSet($stateSet);
         $this->setState($state);
         $this->_fsm->expects($this->once())->method('isInitialized')->will($this->returnValue(true));

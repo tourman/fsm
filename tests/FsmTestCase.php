@@ -19,19 +19,10 @@ class FsmTestCase extends PHPUnit_Framework_TestCase
         return new TestFiniteStateMachine();
     }
 
-    public function provideValidStateSets()
+    protected function _getBillingStateSet()
     {
         /*
-data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAFAAQMAAAC4JmMQAAAABlBMVEXw+f
-8AAAAr1JQLAAABzklEQVRo3u3Yv0sCcRQA8A5PuKnuKjcJE4JTpEV3D7qQDBe5/oHAoSWwhoSWwxzkhj
-I0XJrCpaV/IYcgA8m/wtm1wTDvh5719fskvJND31t83Ifv4/zel/fgu4aB4b1IDozoUzhk/rDIyCbHXm
-FugBydiyOz2LO7huwcw43LDoYq7rNfAtmnzig+z2pWApkLucjsrP+9jJ8EZyjyP3j9+POo1aeykBayYo
-XK/HXlFOI0rzNcHHy1d96Tu4aMM9TbM5QZjOIrOU4neMpqZhqzEsg+FWA7c5D9EpDZL0RkQHHiAJLZr+
-NLZsgryDvhu4Ke7naCl+1ctaQ/Y7bqqsV8uCwbLD5pmw812eBtRbI4mL0d8U35UDGLN8bMX1irO+Eiu6
-e8/WXNYk4vnpANlie4VzD5cfhqcXP1QV31wK4hO85w44LbHtnF7Wdke2WIZ0Bxco2DswReDc8xeAquwA
-x1/5PYB5DCo+OLjKwz08l1qyqdxVygJtF5/ySgAMVbQ27SmcsEEkDxjUw33vTkriE7y3DjsrNlbNgLnK
-F4l4t3uciOc759nvruUVmLnckCV6JxMfqcEloAv0CrtYgIcf5DvLrveXLXkF28y8XAcCF+AHQzIWtrUf
-fdAAAAAElFTkSuQmCC
+data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAFAAQMAAAC4JmMQAAAABlBMVEXw+f8AAAAr1JQLAAABzklEQVRo3u3Yv0sCcRQA8A5PuKnuKjcJE4JTpEV3D7qQDBe5/oHAoSWwhoSWwxzkhjI0XJrCpaV/IYcgA8m/wtm1wTDvh5719fskvJND31t83Ifv4/zel/fgu4aB4b1IDozoUzhk/rDIyCbHXmFugBydiyOz2LO7huwcw43LDoYq7rNfAtmnzig+z2pWApkLucjsrP+9jJ8EZyjyP3j9+POo1aeykBayYoXK/HXlFOI0rzNcHHy1d96Tu4aMM9TbM5QZjOIrOU4neMpqZhqzEsg+FWA7c5D9EpDZL0RkQHHiAJLZr+NLZsgryDvhu4Ke7naCl+1ctaQ/Y7bqqsV8uCwbLD5pmw812eBtRbI4mL0d8U35UDGLN8bMX1irO+Eiu6e8/WXNYk4vnpANlie4VzD5cfhqcXP1QV31wK4hO85w44LbHtnF7Wdke2WIZ0Bxco2DswReDc8xeAquwAx1/5PYB5DCo+OLjKwz08l1qyqdxVygJtF5/ySgAMVbQ27SmcsEEkDxjUw33vTkriE7y3DjsrNlbNgLnKF4l4t3uciOc759nvruUVmLnckCV6JxMfqcEloAv0CrtYgIcf5DvLrveXLXkF28y8XAcCF+AHQzIWtrUffdAAAAAElFTkSuQmCC
          */
         $stateSet = array(
             'INIT' => array(
@@ -110,9 +101,14 @@ fdAAAAAElFTkSuQmCC
                 ),
             ),
         );
+        return $stateSet;
+    }
+
+    public function provideValidStateSets()
+    {
         return array(
             array(
-                'stateSet' => $stateSet,
+                'stateSet' => $this->_getBillingStateSet(),
             ),
         );
     }
@@ -120,7 +116,7 @@ fdAAAAAElFTkSuQmCC
     public function provideValidStates()
     {
         $argumentSets = array();
-        $stateSet = array_shift(array_shift($this->provideValidStateSets()));
+        $stateSet = $this->_getBillingStateSet();
         $states = array_keys($stateSet);
         foreach ($states as $state) {
             $argumentSets[] = array(
@@ -170,18 +166,6 @@ fdAAAAAElFTkSuQmCC
             }
         }
         return $argumentSets;
-    }
-
-    public function assertInvalidTypeArgumentExceptionMessage(InvalidArgumentException $e, $argumentName)
-    {
-        $messageRegExp = preg_quote("Argument \$$argumentName has invalid type", '/');
-        $this->assertRegExp("/^$messageRegExp/", $e->getMessage());
-    }
-
-    public function assertInvalidValueArgumentExceptionMessage(InvalidArgumentException $e, $argumentName)
-    {
-        $messageRegExp = preg_quote("Argument \$$argumentName has invalid value", '/');
-        $this->assertRegExp("/^$messageRegExp/", $e->getMessage());
     }
 
     public function setStateSet($stateSet)
