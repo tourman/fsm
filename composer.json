@@ -1,6 +1,5 @@
 {
     "name": "tourman/fsm",
-    "version": "1.0.3",
     "type": "library",
     "description": "Finite State Machine",
     "keywords": ["fsm", "finite state machine"],
